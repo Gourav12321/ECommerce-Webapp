@@ -71,7 +71,7 @@ function Navbar() {
                 <div className='lg:h-[60px] flex justify-start items-center'>
                     <Link to='/'>
                         <div className='flex justify-center items-center gap-4 shadow-lg lg:mr-10 mr-2 lg:px-3 px-6 my-2 py-2 bg-white rounded-full'>
-                            <img src='logo.png' className='object-cover h-[30px] shadow-md rounded-full p-1 bg-black' alt='logo' />
+                            <img src='https://firebasestorage.googleapis.com/v0/b/e-com-ff1ce.appspot.com/o/logo.png?alt=media&token=ae807b0a-857b-45bd-8c4a-b895607b07bb' className='object-cover h-[30px] shadow-md rounded-full p-1 bg-black' alt='logo' />
                             <div className='text-[10px] font-bold text-gray-800'>
                                 <p>E-Commerce</p>
                                 <p>Website</p>
