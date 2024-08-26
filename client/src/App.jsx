@@ -16,6 +16,7 @@ import { ToastContainer } from 'react-toastify';
 import AdminLayout from './AdminLayout';
 import AdminRoute from './Pages/Admin/AdminRoutes';
 import CreateCategory from './Pages/Admin/createCategory';
+import ProductPage from './Pages/Product/ProductPage';
 
 function App() {
   return (
@@ -29,13 +30,15 @@ function App() {
         <Route path='/setup-password' element={<SetupPassword />} />
         <Route path='/address' element={<MainLayout><AddressForm /></MainLayout>} />
 
-        {/* Admin Routes with protection */}
         <Route path='/admin' element={<AdminRoute><AdminLayout><Admin /></AdminLayout></AdminRoute>}>
           <Route path='all-users' element={<AllUsers />} />
           <Route path='all-products' element={<AllProduct />} />
           <Route path='upload-product' element={<UploadProduct />} />
           <Route path='create-category' element={<CreateCategory />} />
+
         </Route>
+        <Route path='/product/:id' element={<MainLayout><ProductPage /></MainLayout>} />
+
       </Routes>
       <ToastContainer />
     </BrowserRouter>

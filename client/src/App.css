@@ -89,3 +89,28 @@
 
 
 
+  .react-image-magnify__lens {
+    position: absolute;
+    border: 1px solid #000;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+  }
+  
+  .react-image-magnify__large-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    transition: transform 0.2s ease;
+  }
+  
+  .react-image-magnify__enlarged-image-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+    pointer-events: none;
+  }
+  
