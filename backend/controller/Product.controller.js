@@ -3,12 +3,63 @@ const Product = require("../model/Product.model");
 // Create a new product
 const createProduct = async (req, res) => {
   try {
-    const newProduct = new Product(req.body);
+    // Extract product data from the request
+    const {
+      title,
+      description,
+      category,
+      subcategory,
+      price,
+      discountPercentage,
+      rating,
+      stock,
+      tags, // Tags should be an array
+      brand,
+      sku,
+      weight,
+      dimensions,
+      warrantyInformation,
+      shippingInformation,
+      availabilityStatus,
+      returnPolicy,
+      minimumOrderQuantity,
+      thumbnail,
+      images
+    } = req.body;
+
+    // Process tags (assuming they come in as a string)
+    const processedTags = Array.isArray(tags) ? tags : tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+
+    // Create a new product document
+    const newProduct = new Product({
+      title,
+      description,
+      category,
+      subcategory,
+      price,
+      discountPercentage,
+      rating,
+      stock,
+      tags: processedTags, // Save as array
+      brand,
+      sku,
+      weight,
+      dimensions,
+      warrantyInformation,
+      shippingInformation,
+      availabilityStatus,
+      returnPolicy,
+      minimumOrderQuantity,
+      thumbnail,
+      images
+    });
+
+    // Save the product to the database
     await newProduct.save();
-    res.status(201).json({ success: true, product: newProduct });
+    res.status(201).json({ message: 'Product created successfully', product: newProduct });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Failed to create product', error: error.message });
+    console.error('Error creating product:', error);
+    res.status(500).json({ message: 'Failed to create product', error });
   }
 };
 

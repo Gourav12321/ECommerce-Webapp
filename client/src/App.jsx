@@ -27,7 +27,7 @@ function App() {
         <Route path='/sign-up' element={<Signup />} />
         <Route path='/verify-email' element={<VerifyEmail />} />
         <Route path='/setup-password' element={<SetupPassword />} />
-        <Route path='/setup-address' element={<AddressForm />} />
+        <Route path='/address' element={<MainLayout><AddressForm /></MainLayout>} />
 
         {/* Admin Routes with protection */}
         <Route path='/admin' element={<AdminRoute><AdminLayout><Admin /></AdminLayout></AdminRoute>}>

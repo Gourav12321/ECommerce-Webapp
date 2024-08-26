@@ -204,67 +204,29 @@ const signin = async (req, res) => {
 };
 
 const userAddress = async (req, res) => {
-  const { email, address } = req.body;
-
-  if (
-    !email ||
-    !address.phoneNumber ||
-    !address.city ||
-    !address.state ||
-    !address.pincode
-  ) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Missing required fields" });
-  }
   try {
-    if (!email) {
-      return res
-        .status(401)
-        .json({ success: false, message: "User not signed in" });
-    }
+    const { email, address } = req.body;
 
-    const user = await User.findOne({ email });
+    const existingAddress = await Address.findOne({ email });
 
-    if (!user) {
-      return res.status(401).json({ success: false, message: "Invalid email" });
-    }
-
-    const newAddress = new Address({
-      name: user.firstName, // Or full name as desired
-      phoneNumber: address.phoneNumber,
-      houseNo: address.houseNo,
-      landmark: address.landmark,
-      city: address.city,
-      state: address.state,
-      pincode: address.pincode,
-    });
-
-    await newAddress.save();
-
-    user.addresses.push(newAddress);
-    await user.save();
-
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Address added successfully",
-        address: newAddress,
-      });
-  } catch (error) {
-    if (error.code === 11000) {
-      res
-        .status(400)
-        .json({ success: false, message: "Duplicate phone number" });
+    if (existingAddress) {
+      // Append the new address to the existing addresses
+      existingAddress.addresses.push(address);
+      await existingAddress.save();
     } else {
-      console.error("Error in userAddress:", error);
-      res
-        .status(500)
-        .json({ success: false, message: "Failed to add address" });
+      // Create a new address document with the initial address
+      const newAddress = new Address({ email, addresses: [address] });
+      await newAddress.save();
     }
+
+    res.status(200).json({ message: "Address saved successfully" });
+  } catch (error) {
+    console.error("Error saving address:", error);
+    res.status(500).json({ message: "Failed to save address" });
   }
 };
+
+
 
 const getUserWithAddresses = async (req, res) => {
   try {
@@ -393,6 +355,75 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ message: "Failed to delete user", error });
   }
 };
+const getAllAddresses = async (req, res) => {
+  try {
+    const { email } = req.query; // Ensure email is sent as a query parameter
+
+    const address = await Address.findOne({ email });
+
+    if (!address) {
+      return res.status(404).json({ success: false, message: "Addresses not found" });
+    }
+
+    res.status(200).json({ success: true, addresses: address.addresses });
+  } catch (error) {
+    console.error("Error fetching addresses:", error);
+    res.status(500).json({ success: false, message: "Failed to retrieve addresses" });
+  }
+};
+
+
+const updateAddress = async (req, res) => {
+  try {
+    const { email, address } = req.body;
+
+    // Validate request data
+    if (!email || !address || !address._id) {
+      return res.status(400).json({ success: false, message: 'Invalid request data' });
+    }
+
+    // Find and update the specific address within the addresses array
+    const updatedAddress = await Address.findOneAndUpdate(
+      { email: email, "addresses._id": address._id },
+      { $set: { "addresses.$": address } },
+      { new: true }
+    );
+
+    if (updatedAddress) {
+      res.status(200).json({ success: true, address: updatedAddress });
+    } else {
+      res.status(404).json({ success: false, message: 'Address not found' });
+    }
+  } catch (error) {
+    console.error("Error updating address:", error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
+
+
+// Delete Address
+const deleteAddress = async (req, res) => {
+  try {
+    const { email } = req.query; // Email passed as a query parameter
+    const { addressId } = req.params; // Address ID passed as a URL parameter
+    // Verify address existence and remove it from the addresses collection
+    const result = await Address.updateOne(
+      { email: email, 'addresses._id': addressId }, // Find the address by email and addressId
+      { $pull: { addresses: { _id: addressId } } } // Pull the address from the array
+    );
+
+    if (result.modifiedCount > 0) {
+      res.status(200).json({ success: true, message: 'Address deleted successfully' });
+    } else {
+      res.status(404).json({ success: false, message: 'Address not found' });
+    }
+  } catch (error) {
+    console.error("Error deleting address:", error);
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
+};
+
 
 module.exports = {
   deleteUser,
@@ -408,4 +439,7 @@ module.exports = {
   getUserWithAddresses,
   OAuth,
   getAddress,
+  getAllAddresses,
+  deleteAddress,
+  updateAddress
 };

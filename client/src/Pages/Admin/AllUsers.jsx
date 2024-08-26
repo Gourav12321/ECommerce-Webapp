@@ -65,6 +65,7 @@ const AllUsers = () => {
       <table className="min-w-full divide-y divide-gray-200">
         <thead>
           <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
@@ -74,6 +75,9 @@ const AllUsers = () => {
         <tbody>
           {users.map((user) => (
             <tr key={user._id}>
+              <td className='px-6  items-center py-3'>
+                <img src={user.profile} alt="" className='w-12 h-12 rounded-full'/>
+              </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.fullName}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.role}</td>

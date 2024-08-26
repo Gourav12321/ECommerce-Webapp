@@ -53,7 +53,7 @@ const AllProducts = () => {
             <img
               src={product.thumbnail}
               alt={product.title}
-              className="w-full h-40 object-cover"
+              className="w-full h-40 object-contain"
             />
             <div className="p-4">
               <h2 className="text-lg font-semibold">{product.title}</h2>
@@ -74,9 +74,9 @@ const AllProducts = () => {
             </button>
             <h2 className="text-2xl font-bold mb-4">{selectedProduct.title}</h2>
             <img
-              src={selectedProduct.thumbnail}
+              src={selectedProduct.images[0]}
               alt={selectedProduct.title}
-              className="w-full h-64 object-cover mb-4"
+              className="w-full h-64 object-contain mb-4"
             />
             <p className="text-gray-700 mb-4">{selectedProduct.description}</p>
             <p className="mb-2"><strong>Price:</strong> {selectedProduct.price} USD</p>

@@ -1,28 +1,25 @@
 const mongoose = require('mongoose');
 
 // Define the Address schema
-const addressSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    }, 
-    name: String,
-    phoneNumber: {
-        type: String,
-        unique: true,
-        required: true
-    },
-
-    houseNo: String,
-    landmark: String,
-    city: String,
-    state: String,
-    pincode: String
-});
+const AddressSchema = new mongoose.Schema({
+    email: { type: String, required: true },
+    addresses: [
+      {
+        phoneNumber: String,
+        houseNo: String,
+        street: String,
+        landmark: String,
+        district: String,
+        country: String,
+        state: String,
+        city: String,
+        pincode: String,
+      },
+    ],
+  });
 
 // Create and export the Address model
-const Address = mongoose.model('Address', addressSchema);
+const Address = mongoose.model('Address', AddressSchema);
 
 // Define the User schema
 const userSchema = new mongoose.Schema({

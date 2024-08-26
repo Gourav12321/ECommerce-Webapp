@@ -57,7 +57,7 @@ const UploadProduct = () => {
   const handleCategoryChange = async (e) => {
     const categoryId = e.target.value;
     setProduct((prevProduct) => ({ ...prevProduct, category: categoryId }));
-    
+
     try {
       const { data } = await axios.get(`/api/categories/${categoryId}/subcategories`);
       setSubcategories(data.subcategories);
@@ -91,12 +91,10 @@ const UploadProduct = () => {
   };
 
   const handleImageChange = (e) => {
-    const files = e.target.files;
+    const files = Array.from(e.target.files);
     const urls = [];
-    const newImages = [];
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+    files.forEach(file => {
       const reader = new FileReader();
 
       reader.onloadend = () => {
@@ -105,10 +103,9 @@ const UploadProduct = () => {
       };
 
       reader.readAsDataURL(file);
-      newImages.push(file);
-    }
+    });
 
-    setSelectedImages(newImages);
+    setSelectedImages(files);
   };
 
   const handleImageLinkChange = (e) => {
@@ -173,20 +170,21 @@ const UploadProduct = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Upload Product</h1>
-      <div className="bg-white p-6 rounded-lg shadow-md">
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="title">Title</label>
-          <input
-            type="text"
-            id="title"
-            name="title"
-            value={product.title}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            placeholder="Enter product title"
-          />
-        </div>
+    <h1 className="text-2xl font-bold mb-4">Upload Product</h1>
+    <div className="bg-white p-6 rounded-lg shadow-md">
+      {/* Form Fields */}
+      <div className="mb-4">
+        <label className="block text-gray-700 mb-2" htmlFor="title">Title</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value={product.title}
+          onChange={handleChange}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          placeholder="Enter product title"
+        />
+      </div>
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="description">Description</label>
           <textarea

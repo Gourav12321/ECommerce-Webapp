@@ -123,6 +123,7 @@ function Navbar() {
                                     <Link to='/orders' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Orders</Link>
                                     {user &&
                                     <Link to='/admin' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Admin Panel</Link>}
+                                     <Link to='/address' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Your Address</Link>
                                     <button onClick={handleLogout} className='block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100'>Logout</button>
                                 </div>
                             )}
@@ -191,6 +192,7 @@ function Navbar() {
                         <Link to='/orders' className='mt-2 text-gray-800 hover:text-gray-900'>Orders</Link>
                         {user &&
                         <Link to='/admin' className='mt-2 text-gray-800 hover:text-gray-900'>Admin Panel</Link>}
+                        <Link to='/address' className='mt-2 text-gray-800 hover:text-gray-900'>Your Address</Link>
                         <button onClick={handleLogout} className='mt-4 text-gray-800 hover:text-gray-900'>Logout</button>
                     </div>
                 </div>

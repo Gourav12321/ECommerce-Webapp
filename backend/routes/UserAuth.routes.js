@@ -14,6 +14,9 @@ const {
   getAllUsers,
   updateUser,
   deleteUser,
+  getAllAddresses,
+  updateAddress,
+  deleteAddress,
 } = require("../controller/UserAuth.controller");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
@@ -29,7 +32,9 @@ router.post("/oAuthLogin", OAuthLogin);
 router.post("/userAddress", userAddress);
 router.get("/getUser", getUserWithAddresses);
 router.post("/getaddress/:id", getAddress);
-
+router.get("/getAllAddresses", getAllAddresses);
+router.put('/updateAddress', updateAddress);
+router.delete('/deleteAddress/:addressId', deleteAddress);
 // Admin routes
 router.put("/edit-user", editUser);
 router.get("/users", getAllUsers);

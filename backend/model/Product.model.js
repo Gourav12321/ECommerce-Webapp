@@ -32,15 +32,12 @@ const reviewSchema = new Schema({
 const dimensionsSchema = new Schema({
   width: {
     type: Number,
-    required: true
   },
   height: {
     type: Number,
-    required: true
   },
   depth: {
     type: Number,
-    required: true
   }
 });
 
@@ -85,7 +82,6 @@ const productSchema = new Schema({
   },
   brand: {
     type: String,
-    required: true
   },
   sku: {
     type: String,
