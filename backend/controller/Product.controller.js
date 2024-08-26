@@ -139,8 +139,30 @@ const deleteProduct = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to delete product', error: error.message });
   }
 };
+// Search products by various fields
+const searchProducts = async (req, res) => {
+  try {
+    const { query } = req.query; // Get search query from the request
+
+    const products = await Product.find({
+      $or: [
+        { title: { $regex: query, $options: 'i' } },
+        { description: { $regex: query, $options: 'i' } },
+        { 'category.name': { $regex: query, $options: 'i' } },
+        { 'subcategory.name': { $regex: query, $options: 'i' } },
+        { tags: { $in: [query] } }
+      ]
+    });
+
+    res.status(200).json({ success: true, products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Failed to search products', error: error.message });
+  }
+};
 
 module.exports = {
+  searchProducts,
   createProduct,
   getProducts,
   getProductById,

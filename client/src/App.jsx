@@ -17,7 +17,7 @@ import AdminLayout from './AdminLayout';
 import AdminRoute from './Pages/Admin/AdminRoutes';
 import CreateCategory from './Pages/Admin/createCategory';
 import ProductPage from './Pages/Product/ProductPage';
-
+import 'react-toastify/dist/ReactToastify.css';
 function App() {
   return (
     <BrowserRouter>

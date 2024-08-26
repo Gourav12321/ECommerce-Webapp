@@ -8,16 +8,19 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../Pages/Redux/userSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import debounce from 'lodash.debounce'; // Add lodash.debounce
 
 function Navbar() {
     const [search, setSearch] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
     const [icon, setIcon] = useState(false);
     const [cart, setCart] = useState(0);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen1, setSidebarOpen1] = useState(false);
+    const sidebarRef = useRef(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const inputRef = useRef(null);
     const dropdownRef = useRef(null);
-    const [about, setAbout] = useState(false);
     const user = useSelector((state) => state.user.user);
     const dispatch = useDispatch();
 
@@ -29,17 +32,42 @@ function Navbar() {
         setIcon(!icon);
     };
 
+    // Use debounce for search input change
+    const debouncedSearch = useRef(debounce(async (query) => {
+        if (query.trim()) {
+            try {
+                const response = await fetch(`/api/search?query=${encodeURIComponent(query.trim())}`);
+                const data = await response.json();
+                if (data.success) {
+                    setSearchResults(data.products);
+                } else {
+                    setSearchResults([]);
+                }
+            } catch (error) {
+                console.error('Error fetching search results:', error);
+                setSearchResults([]);
+            }
+        } else {
+            setSearchResults([]);
+        }
+    }, 300)).current; // Debounce delay of 300ms
+
     const handleChange = (e) => {
         setSearch(e.target.value);
+        debouncedSearch(e.target.value); // Call debounced function
     };
 
     const handleClickOutside = (event) => {
         if (inputRef.current && !inputRef.current.contains(event.target)) {
             setIcon(false);
             setSearch('');
+            
         }
         if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
             setDropdownOpen(false);
+        }
+        if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+            setSidebarOpen(false);
         }
     };
 
@@ -59,6 +87,9 @@ function Navbar() {
 
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);
+    };
+    const toggleSidebar1 = () => {
+        setSidebarOpen1(!sidebarOpen1);
     };
 
     const toggleDropdown = () => {
@@ -103,10 +134,25 @@ function Navbar() {
                     <div className={`${icon === true ? 'w-full h-[300px] flex z-30 absolute bg-white transform top-[3.1rem] ' : ''}`}>
                         {search === '' && !icon ?
                             <div className={`${icon === false ? 'hidden' : 'flex z-20'}`}>
-                                Search
                             </div> :
-                            <div className='w-full h-full flex justify-center items-center z-20 shadow-lg'>
-                                <img src='https://static.vecteezy.com/system/resources/thumbnails/016/976/338/small/document-file-not-found-search-no-result-concept-illustration-flat-design-eps10-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-vector.jpg' alt='No results' />
+                            <div className={`absolute w-full bg-white border h-[100%] overflow-y-auto border-gray-300 shadow-lg mt-2 ${icon ? '' : 'hidden'}`}>
+                                {searchResults.length > 0 ? (
+                                    <ul>
+                                        {searchResults.map((product) => (
+                                            <li key={product._id} className="p-2 border-b hover:bg-gray-100">
+                                                <Link to={`/product/${product._id}`} className="flex items-center">
+                                                    <img src={product.thumbnail} alt={product.title} className="w-12 h-12 object-cover mr-2" />
+                                                    <div className="text-sm">
+                                                        <p className="font-semibold">{product.title}</p>
+                                                        <p>{product.description.slice(0, 50)}...</p>
+                                                    </div>
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <div className="p-4 text-center">No results found</div>
+                                )}
                             </div>
                         }
                     </div>
@@ -121,9 +167,8 @@ function Navbar() {
                                 <div ref={dropdownRef} className='absolute right-0 mt-2 bg-white border border-gray-200 shadow-lg rounded-lg w-48'>
                                     <Link to='/profile' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Profile</Link>
                                     <Link to='/orders' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Orders</Link>
-                                    {user &&
-                                    <Link to='/admin' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Admin Panel</Link>}
-                                     <Link to='/address' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Your Address</Link>
+                                    {user && <Link to='/admin' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Admin Panel</Link>}
+                                    <Link to='/address' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Your Address</Link>
                                     <button onClick={handleLogout} className='block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100'>Logout</button>
                                 </div>
                             )}
@@ -142,61 +187,94 @@ function Navbar() {
                         ref={dropdownRef}
                     >
                         <HiOutlineDotsVertical
-                            className='text-xl cursor-pointer text-gray-800'
-                            onClick={() => setAbout(!about)}
+                            onClick={toggleSidebar1}
+                            className='text-2xl text-gray-800'
                         />
-                        {about && (
-                            <div className='absolute z-10 w-[250px] h-[300px] right-0 transform translate-y-5 bg-white shadow-lg p-4 text-center'>
-                                {/* Dropdown content here */}
+                        {sidebarOpen1 && (
+                            <div className='absolute right-0 mt-2 bg-white border border-gray-200 shadow-lg rounded-lg w-48'>
+                                <Link to='/category/1' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Category 1</Link>
+                                <Link to='/category/2' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Category 2</Link>
+                                <Link to='/category/3' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Category 3</Link>
                             </div>
                         )}
                     </div>
+                    
                 </div>
             </div>
-            {/* Mobile and Tablet View */}
-            <div className='lg:hidden flex items-center justify-center w-full mt-2 px-4'>
-                <button
-                    className='text-2xl flex justify-center items-center px-3 text-gray-800'
-                    onClick={toggleSidebar}
-                >
-                    <HiMenu />
-                </button>
-                <div className='relative w-[90%]'>
+            <div className='w-full pb-4 pt-2 lg:hidden flex gap-3 bg-gray-100'>
+            <div className='relative lg:hidden px-4 flex items-center'>
+            <HiMenu
+                onClick={toggleSidebar}
+                className='text-3xl text-gray-800'
+            />
+            {sidebarOpen && (
+                <div className='fixed inset-0 bg-black bg-opacity-50 flex justify-end z-10'>
+                    <div ref={sidebarRef} className='bg-white w-64 h-full shadow-lg'>
+                        <div className='flex justify-between items-center p-4'>
+                            <span className='text-xl font-bold'>Menu</span>
+                            <RxCross2 className='text-2xl cursor-pointer' onClick={toggleSidebar} />
+                        </div>
+                        <ul className='p-4'>
+                            <li><Link to='/profile' className='block py-2 text-gray-800 hover:bg-gray-100'>Profile</Link></li>
+                            <li><Link to='/orders' className='block py-2 text-gray-800 hover:bg-gray-100'>Orders</Link></li>
+                            {user && <li><Link to='/admin' className='block py-2 text-gray-800 hover:bg-gray-100'>Admin Panel</Link></li>}
+                            <li><Link to='/address' className='block py-2 text-gray-800 hover:bg-gray-100'>Your Address</Link></li>
+                            <li><Link to='/sign-in' className='block py-2 text-gray-800 hover:bg-gray-100' onClick={handleLogout}>Logout</Link></li>
+                        </ul>
+                    </div>
+
+                </div>
+            )}
+        </div>
+        <div className='lg:hidden block relative items-center w-[75%]'>
+                    <span
+                        className={`absolute transform -translate-y-1/2 text-xl top-1/2 ${icon ? '-translate-x-1/2 right-6 search z-10' : '-translate-x-1/2 left-[68%]'}`}
+                        onClick={handleClick}
+                    >
+                        <IoSearch className='text-gray-700' />
+                    </span>
+                    <div
+                        className={`absolute transform -translate-y-1/2 text-xl top-1/2 ${icon ? 'w-[80px] h-10 rounded-r-full bg-light-blue-200 -right-12 -translate-x-[60%] search' : 'hidden'}`}
+                    ></div>
                     <input
                         type="text"
-                        className='text-black h-[40px] w-full rounded-full text-center border border-gray-300'
-                        id='search-mobile'
+                        className='text-black h-[40px] w-full  rounded-full text-center border border-gray-300'
+                        id='search'
                         name='search'
                         value={search}
                         placeholder='Search'
                         onChange={handleChange}
+                        ref={inputRef}
                         onClick={handleClick}
                     />
-                    <button
-                        className={`absolute transform -translate-y-1/2 text-xl top-1/2 right-0 ${icon ? '' : 'block'} bg-gray-500 p-2 rounded-full`}
-                        onClick={handleClick}
-                    >
-                        <IoSearch className='text-white' />
-                    </button>
-                </div>
-            </div>
-            <div className={`fixed top-0 left-0 w-[250px] h-full bg-white shadow-lg transform ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} transition-transform duration-300 ease-in-out z-50`}>
-                <div className='p-4'>
-                    <button className='text-xl float-right' onClick={toggleSidebar}>
-                        <RxCross2 />
-                    </button>
-                    <div className='flex flex-col items-center mt-10'>
-                        <img src={user?.profile} alt="profile" className='w-24 h-24 rounded-full' />
-                        <p className='mt-2 font-bold'>{user?.name}</p>
-                        <Link to='/profile' className='mt-4 text-gray-800 hover:text-gray-900'>Profile</Link>
-                        <Link to='/orders' className='mt-2 text-gray-800 hover:text-gray-900'>Orders</Link>
-                        {user &&
-                        <Link to='/admin' className='mt-2 text-gray-800 hover:text-gray-900'>Admin Panel</Link>}
-                        <Link to='/address' className='mt-2 text-gray-800 hover:text-gray-900'>Your Address</Link>
-                        <button onClick={handleLogout} className='mt-4 text-gray-800 hover:text-gray-900'>Logout</button>
+                    <div className={`${icon === true ? 'w-full h-[300px] flex z-30 absolute bg-white transform top-[3.1rem] ' : ''}`}>
+                        {search === '' && !icon ?
+                            <div className={`${icon === false ? 'hidden' : 'flex z-20'}`}>
+                            </div> :
+                            <div className={`absolute w-full bg-white border h-[100%] overflow-y-auto border-gray-300 shadow-lg mt-0 ${icon ? '' : 'hidden'}`}>
+                                {searchResults.length > 0 ? (
+                                    <ul>
+                                        {searchResults.map((product) => (
+                                            <li key={product._id} className="p-2 border-b hover:bg-gray-100">
+                                                <Link to={`/product/${product._id}`} className="flex items-center">
+                                                    <img src={product.thumbnail} alt={product.title} className="w-12 h-12 object-cover mr-2" />
+                                                    <div className="text-sm">
+                                                        <p className="font-semibold">{product.title}</p>
+                                                        <p>{product.description.slice(0, 50)}...</p>
+                                                    </div>
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                ) : (
+                                    <div className="p-4 text-center">No results found</div>
+                                )}
+                            </div>
+                        }
                     </div>
                 </div>
-            </div>
+        </div>
+            <ToastContainer />
         </div>
     );
 }

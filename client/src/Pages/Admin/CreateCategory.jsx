@@ -69,71 +69,75 @@ const CreateCategory = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">Create Category and Subcategory</h1>
-      
-      <form onSubmit={handleCategorySubmit} className="bg-white p-6 rounded-lg shadow-md mb-6">
-        <h2 className="text-2xl font-semibold mb-4">Create Category</h2>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="category">Category Name</label>
-          <input
-            type="text"
-            id="category"
-            value={categoryName}
-            onChange={handleCategoryChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            placeholder="Enter category name"
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
-        >
-          Create Category
-        </button>
-      </form>
-      
-      <form onSubmit={handleSubCategorySubmit} className="bg-white p-6 rounded-lg shadow-md">
-        <h2 className="text-2xl font-semibold mb-4">Create Subcategory</h2>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="category">Select Category</label>
-          <select
-            id="category"
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            required
+    <div className="max-w-4xl mx-auto p-6 lg:pt-0 pt-10 sm:p-8">
+      <h1 className="text-3xl font-bold mb-6 text-center">Create Category and Subcategory</h1>
+
+      <div className="space-y-6">
+        {/* Create Category Form */}
+        <form onSubmit={handleCategorySubmit} className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-4">Create Category</h2>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="category">Category Name</label>
+            <input
+              type="text"
+              id="category"
+              value={categoryName}
+              onChange={handleCategoryChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder="Enter category name"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
           >
-            <option value="">Select a category</option>
-            {categories.map((cat) => (
-              <option key={cat._id} value={cat._id}>
-                {cat.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="subcategory">Subcategory Name</label>
-          <input
-            type="text"
-            id="subcategory"
-            value={subCategoryName}
-            onChange={handleSubCategoryChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            placeholder="Enter subcategory name"
-            required
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
-        >
-          Create Subcategory
-        </button>
-      </form>
-      
-      {message && <p className="mt-6 text-gray-700">{message}</p>}
+            Create Category
+          </button>
+        </form>
+
+        {/* Create Subcategory Form */}
+        <form onSubmit={handleSubCategorySubmit} className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold mb-4">Create Subcategory</h2>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="category">Select Category</label>
+            <select
+              id="category"
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              required
+            >
+              <option value="">Select a category</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700 mb-2" htmlFor="subcategory">Subcategory Name</label>
+            <input
+              type="text"
+              id="subcategory"
+              value={subCategoryName}
+              onChange={handleSubCategoryChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder="Enter subcategory name"
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-blue-600 transition duration-300"
+          >
+            Create Subcategory
+          </button>
+        </form>
+      </div>
+
+      {message && <p className="mt-6 text-gray-700 text-center">{message}</p>}
     </div>
   );
 };

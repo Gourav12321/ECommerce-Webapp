@@ -5,6 +5,7 @@ import { Country, State, City } from "country-state-city";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import AddressDisplay from "./AddressDisplay";
+import { toast } from 'react-toastify'; // Import toast
 
 const AddressForm = () => {
   const user = useSelector((state) => state.user.user);
@@ -132,15 +133,20 @@ const AddressForm = () => {
           );
           setSelectedAddress(null);
           setIsEditing(false);
+          toast.success('Address updated successfully!');
+        } else {
+          toast.error('Failed to update address');
         }
       } else {
         const response = await axios.post("/api/user/userAddress", {
           email: userEmail,
-          address,
+          address : address,
         });
         if (response.data.success) {
           setAddresses([...addresses, response.data.address]);
+         
         }
+        toast.success('Address added successfully!');
       }
       setAddress({
         phoneNumber: "",
@@ -156,6 +162,7 @@ const AddressForm = () => {
       setShowForm(false); // Hide the form after submission
     } catch (error) {
       console.error("Error submitting address:", error);
+      toast.error('An error occurred while submitting the address' , error.message);
     }
   };
 
@@ -175,9 +182,13 @@ const AddressForm = () => {
         setAddresses(addresses.filter((addr) => addr._id !== selectedAddress._id));
         setSelectedAddress(null);
         setIsEditing(false);
+        toast.success('Address deleted successfully!');
+      } else {
+        toast.error('Failed to delete address');
       }
     } catch (error) {
       console.error("Error deleting address:", error);
+      toast.error('An error occurred while deleting the address');
     }
   };
 
@@ -203,21 +214,46 @@ const AddressForm = () => {
     setShowForm(true); // Show form for adding a new address
   };
 
+  const onSave = async (editedAddress) => {
+    try {
+      const response = await axios.put("/api/user/updateAddress", {
+        email: userEmail,
+        address: { ...editedAddress, _id: selectedAddress._id },
+      });
+      if (response.data.success) {
+        setAddresses(
+          addresses.map((addr) =>
+            addr._id === selectedAddress._id ? response.data.address : addr
+          )
+        );
+        setIsEditing(false);
+        setSelectedAddress(null);
+        setShowForm(false); // Hide form after saving
+        toast.success('Address updated successfully!');
+      } else {
+        toast.error('Failed to update address');
+      }
+    } catch (error) {
+      console.error("Error saving address:", error);
+      toast.error('An error occurred while saving the address');
+    }
+  };
+
   return (
-    <div className="flex">
-      <div className="w-1/4 border-r">
-        <h2 className="text-xl font-bold p-4">Addresses</h2>
+    <div className="flex flex-col md:flex-row">
+      <div className="md:w-1/4 border-r p-4">
+        <h2 className="text-xl font-bold mb-4">Addresses</h2>
         <button
           onClick={handleAddNewAddress}
-          className="bg-green-500 text-white py-2 px-4 m-2 rounded-md hover:bg-green-600 w-3/4 "
+          className="bg-green-500 text-white py-2 px-4 mb-4 rounded-md hover:bg-green-600 w-full"
         >
           Add New Address
         </button>
-        <ul>
+        <ul className="space-y-2">
           {addresses.map((addr) => (
             <li
               key={addr._id}
-              className="cursor-pointer p-2 border-b hover:bg-gray-200"
+              className="cursor-pointer p-2 border-b hover:bg-gray-200 rounded-md"
               onClick={() => {
                 setSelectedAddress(addr);
                 setShowForm(false); // Hide form when selecting an existing address
@@ -228,73 +264,66 @@ const AddressForm = () => {
           ))}
         </ul>
       </div>
-      <div className="w-3/4 p-4">
+      <div className="md:w-3/4 p-4">
         <h2 className="text-xl font-bold mb-4">
-          {selectedAddress
-            ? isEditing
-              ? "Edit Address"
-              : "Address Details"
-            : showForm
-            ? "Add New Address"
-            : "Select an Address"}
+          {selectedAddress 
+            ? (isEditing ? "Edit Address" : "")
+            : (showForm ? "Add New Address" : "Select an Address")}
         </h2>
+
         {showForm ? (
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
               <label className="block mb-2">Phone Number</label>
               <input
                 type="text"
                 name="phoneNumber"
                 value={address.phoneNumber}
                 onChange={handleChange}
-                className="border p-2 w-full"
-                required
+                className="border p-2 rounded-md w-full"
               />
             </div>
-            <div className="mb-4">
-              <label className="block mb-2">House No</label>
+            <div>
+              <label className="block mb-2">House No.</label>
               <input
                 type="text"
                 name="houseNo"
                 value={address.houseNo}
                 onChange={handleChange}
-                className="border p-2 w-full"
-                required
+                className="border p-2 rounded-md w-full"
               />
             </div>
-            <div className="mb-4">
+            <div>
               <label className="block mb-2">Street</label>
               <input
                 type="text"
                 name="street"
                 value={address.street}
                 onChange={handleChange}
-                className="border p-2 w-full"
-                required
+                className="border p-2 rounded-md w-full"
               />
             </div>
-            <div className="mb-4">
+            <div>
               <label className="block mb-2">Landmark</label>
               <input
                 type="text"
                 name="landmark"
                 value={address.landmark}
                 onChange={handleChange}
-                className="border p-2 w-full"
+                className="border p-2 rounded-md w-full"
               />
             </div>
-            <div className="mb-4">
+            <div>
               <label className="block mb-2">District</label>
               <input
                 type="text"
                 name="district"
                 value={address.district}
                 onChange={handleChange}
-                className="border p-2 w-full"
-                required
+                className="border p-2 rounded-md w-full"
               />
             </div>
-            <div className="mb-4">
+            <div>
               <label className="block mb-2">Country</label>
               <Select
                 options={countries.map((country) => ({
@@ -302,19 +331,11 @@ const AddressForm = () => {
                   label: country.name,
                 }))}
                 onChange={handleCountryChange}
-                value={
-                  address.country
-                    ? {
-                        value: countries.find(
-                          (country) => country.name === address.country
-                        )?.isoCode,
-                        label: address.country,
-                      }
-                    : null
-                }
+                value={address.country ? { label: address.country, value: address.country } : null}
+                className="w-full"
               />
             </div>
-            <div className="mb-4">
+            <div>
               <label className="block mb-2">State</label>
               <Select
                 options={states.map((state) => ({
@@ -322,19 +343,11 @@ const AddressForm = () => {
                   label: state.name,
                 }))}
                 onChange={handleStateChange}
-                value={
-                  address.state
-                    ? {
-                        value: states.find(
-                          (state) => state.name === address.state
-                        )?.isoCode,
-                        label: address.state,
-                      }
-                    : null
-                }
+                value={address.state ? { label: address.state, value: address.state } : null}
+                className="w-full"
               />
             </div>
-            <div className="mb-4">
+            <div>
               <label className="block mb-2">City</label>
               <Select
                 options={cities.map((city) => ({
@@ -342,54 +355,38 @@ const AddressForm = () => {
                   label: city.name,
                 }))}
                 onChange={handleCityChange}
-                value={
-                  address.city
-                    ? {
-                        value: address.city,
-                        label: address.city,
-                      }
-                    : null
-                }
+                value={address.city ? { label: address.city, value: address.city } : null}
+                className="w-full"
               />
             </div>
-            <div className="mb-4">
+            <div>
               <label className="block mb-2">Pincode</label>
               <input
                 type="text"
                 name="pincode"
                 value={address.pincode}
                 onChange={handleChange}
-                className="border p-2 w-full"
-                required
+                className="border p-2 rounded-md w-full"
               />
             </div>
-            <button
-              type="submit"
-              className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-            >
-              {isEditing ? "Update Address" : "Add Address"}
-            </button>
-            {isEditing && (
+            <div className="flex justify-between">
               <button
                 type="button"
-                onClick={handleDelete}
-                className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 ml-2"
+                onClick={handleCancelEdit}
+                className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
               >
-                Delete Address
+                Cancel
               </button>
-            )}
-            <button
-              type="button"
-              onClick={handleCancelEdit}
-              className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 ml-2"
-            >
-              Cancel
-            </button>
+              <button
+                type="submit"
+                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+              >
+                {isEditing ? "Save" : "Add"}
+              </button>
+            </div>
           </form>
         ) : (
-          selectedAddress && (
-            <AddressDisplay address={selectedAddress} />
-          )
+          selectedAddress && <AddressDisplay address={selectedAddress} onEdit={handleEdit} onDelete={handleDelete} />
         )}
       </div>
     </div>

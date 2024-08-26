@@ -36,10 +36,12 @@ const UploadProduct = () => {
   const [imageURLs, setImageURLs] = useState([]);
   const [imageLinks, setImageLinks] = useState([]);
   const [imageLink, setImageLink] = useState('');
-  const [isImageUpload, setIsImageUpload] = useState(true); // Toggle between upload and link
-  const [thumbnailUpload, setThumbnailUpload] = useState(true); // Toggle for thumbnail upload
+  const [isImageUpload, setIsImageUpload] = useState(true);
+  const [thumbnailUpload, setThumbnailUpload] = useState(true);
   const [thumbnailImage, setThumbnailImage] = useState(null);
   const [thumbnailURL, setThumbnailURL] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -95,14 +97,21 @@ const UploadProduct = () => {
     const urls = [];
 
     files.forEach(file => {
-      const reader = new FileReader();
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
 
-      reader.onloadend = () => {
-        urls.push(reader.result);
-        setImageURLs(urls);
-      };
+        reader.onloadend = () => {
+          urls.push(reader.result);
+          setImageURLs(urls);
+        };
 
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      } else {
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          images: 'Please select valid image files.'
+        }));
+      }
     });
 
     setSelectedImages(files);
@@ -114,15 +123,20 @@ const UploadProduct = () => {
 
   const handleThumbnailChange = (e) => {
     const file = e.target.files[0];
-    const reader = new FileReader();
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
 
-    reader.onloadend = () => {
-      setThumbnailURL(reader.result);
-    };
+      reader.onloadend = () => {
+        setThumbnailURL(reader.result);
+      };
 
-    if (file) {
       reader.readAsDataURL(file);
       setThumbnailImage(file);
+    } else {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        thumbnail: 'Please select a valid image file.'
+      }));
     }
   };
 
@@ -131,6 +145,9 @@ const UploadProduct = () => {
   };
 
   const handleUpload = async () => {
+    setLoading(true);
+    setErrors({});
+
     try {
       // Handle thumbnail upload
       let thumbnailUrl = '';
@@ -165,208 +182,176 @@ const UploadProduct = () => {
     } catch (error) {
       console.error(error);
       alert('Failed to upload product.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-    <h1 className="text-2xl font-bold mb-4">Upload Product</h1>
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      {/* Form Fields */}
-      <div className="mb-4">
-        <label className="block text-gray-700 mb-2" htmlFor="title">Title</label>
-        <input
-          type="text"
-          id="title"
-          name="title"
-          value={product.title}
-          onChange={handleChange}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-          placeholder="Enter product title"
-        />
-      </div>
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-2" htmlFor="description">Description</label>
-          <textarea
-            id="description"
-            name="description"
-            value={product.description}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            placeholder="Enter product description"
-          />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div className="max-w-4xl mx-auto p-4 md:pt-0 pt-10  sm:p-6 lg:p-8">
+      <h1 className="text-2xl font-bold mb-4 text-center">Upload Product</h1>
+      <div className="bg-white p-6 rounded-lg shadow-md">
+        {/* Form Fields */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mb-4">
+          {/* Example Field */}
           <div>
-            <label className="block text-gray-700 mb-2" htmlFor="category">Category</label>
-            <select
-              id="category"
-              name="category"
-              value={product.category}
-              onChange={handleCategoryChange}
+            <label className="block text-gray-700 mb-2" htmlFor="title">Title</label>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              value={product.title}
+              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            >
-              <option value="">Select a category</option>
-              {categories.map((cat) => (
-                <option key={cat._id} value={cat._id}>
-                  {cat.name}
-                </option>
-              ))}
-            </select>
+              placeholder="Product Title"
+            />
           </div>
+          {/* Add similar inputs for other fields */}
           <div>
-            <label className="block text-gray-700 mb-2" htmlFor="subcategory">Subcategory</label>
-            <select
-              id="subcategory"
-              name="subcategory"
-              value={product.subcategory}
-              onChange={handleSubcategoryChange}
+            <label className="block text-gray-700 mb-2" htmlFor="description">Description</label>
+            <textarea
+              id="description"
+              name="description"
+              value={product.description}
+              onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            >
-              <option value="">Select a subcategory</option>
-              {subcategories.map((sub) => (
-                <option key={sub._id} value={sub._id}>
-                  {sub.name}
-                </option>
-              ))}
-            </select>
+              placeholder="Product Description"
+              rows="4"
+            />
           </div>
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="price">Price</label>
             <input
-              type="number"
               id="price"
               name="price"
+              type="number"
               value={product.price}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter product price"
+              placeholder="Product Price"
             />
           </div>
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="discountPercentage">Discount Percentage</label>
             <input
-              type="number"
               id="discountPercentage"
               name="discountPercentage"
+              type="number"
               value={product.discountPercentage}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter discount percentage"
+              placeholder="Discount Percentage"
             />
           </div>
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="rating">Rating</label>
             <input
-              type="number"
               id="rating"
               name="rating"
+              type="number"
+              step="0.1"
+              max="5"
               value={product.rating}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter product rating"
+              placeholder="Product Rating"
             />
           </div>
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="stock">Stock</label>
             <input
-              type="number"
               id="stock"
               name="stock"
+              type="number"
               value={product.stock}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter stock quantity"
+              placeholder="Stock Quantity"
             />
           </div>
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="tags">Tags</label>
             <input
-              type="text"
               id="tags"
               name="tags"
+              type="text"
               value={product.tags}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter product tags"
+              placeholder="Product Tags"
             />
           </div>
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="brand">Brand</label>
             <input
-              type="text"
               id="brand"
               name="brand"
+              type="text"
               value={product.brand}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter brand"
+              placeholder="Product Brand"
             />
           </div>
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="sku">SKU</label>
             <input
-              type="text"
               id="sku"
               name="sku"
+              type="text"
               value={product.sku}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter SKU"
+              placeholder="Product SKU"
             />
           </div>
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="weight">Weight</label>
             <input
-              type="number"
               id="weight"
               name="weight"
+              type="text"
               value={product.weight}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter weight"
+              placeholder="Product Weight"
             />
           </div>
-          <div className="col-span-2 md:col-span-1">
-            <label className="block text-gray-700 mb-2" htmlFor="dimensions">Dimensions</label>
-            <div className="grid grid-cols-3 gap-4">
-              <div>
-                <label className="block text-gray-700 mb-2" htmlFor="width">Width</label>
-                <input
-                  type="number"
-                  id="width"
-                  name="dimensions.width"
-                  value={product.dimensions.width}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  placeholder="Width"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2" htmlFor="height">Height</label>
-                <input
-                  type="number"
-                  id="height"
-                  name="dimensions.height"
-                  value={product.dimensions.height}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  placeholder="Height"
-                />
-              </div>
-              <div>
-                <label className="block text-gray-700 mb-2" htmlFor="depth">Depth</label>
-                <input
-                  type="number"
-                  id="depth"
-                  name="dimensions.depth"
-                  value={product.dimensions.depth}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-                  placeholder="Depth"
-                />
-              </div>
-            </div>
+          <div>
+            <label className="block text-gray-700 mb-2" htmlFor="dimensions.width">Width</label>
+            <input
+              id="dimensions.width"
+              name="dimensions.width"
+              type="text"
+              value={product.dimensions.width}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder="Width"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 mb-2" htmlFor="dimensions.height">Height</label>
+            <input
+              id="dimensions.height"
+              name="dimensions.height"
+              type="text"
+              value={product.dimensions.height}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder="Height"
+            />
+          </div>
+          <div>
+            <label className="block text-gray-700 mb-2" htmlFor="dimensions.depth">Depth</label>
+            <input
+              id="dimensions.depth"
+              name="dimensions.depth"
+              type="text"
+              value={product.dimensions.depth}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              placeholder="Depth"
+            />
           </div>
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="warrantyInformation">Warranty Information</label>
@@ -376,7 +361,8 @@ const UploadProduct = () => {
               value={product.warrantyInformation}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter warranty information"
+              placeholder="Warranty Information"
+              rows="3"
             />
           </div>
           <div>
@@ -387,19 +373,20 @@ const UploadProduct = () => {
               value={product.shippingInformation}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter shipping information"
+              placeholder="Shipping Information"
+              rows="3"
             />
           </div>
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="availabilityStatus">Availability Status</label>
             <input
-              type="text"
               id="availabilityStatus"
               name="availabilityStatus"
+              type="text"
               value={product.availabilityStatus}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter availability status"
+              placeholder="Availability Status"
             />
           </div>
           <div>
@@ -410,117 +397,113 @@ const UploadProduct = () => {
               value={product.returnPolicy}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter return policy"
+              placeholder="Return Policy"
+              rows="3"
             />
           </div>
           <div>
             <label className="block text-gray-700 mb-2" htmlFor="minimumOrderQuantity">Minimum Order Quantity</label>
             <input
-              type="number"
               id="minimumOrderQuantity"
               name="minimumOrderQuantity"
+              type="number"
               value={product.minimumOrderQuantity}
               onChange={handleChange}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-              placeholder="Enter minimum order quantity"
+              placeholder="Minimum Order Quantity"
             />
           </div>
+        </div>
+
+        {/* Category and Subcategory */}
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="category">Category</label>
+          <select
+            id="category"
+            name="category"
+            value={product.category}
+            onChange={handleCategoryChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          >
+            <option value="">Select Category</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>{cat.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="subcategory">Subcategory</label>
+          <select
+            id="subcategory"
+            name="subcategory"
+            value={product.subcategory}
+            onChange={handleSubcategoryChange}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+          >
+            <option value="">Select Subcategory</option>
+            {subcategories.map((sub) => (
+              <option key={sub._id} value={sub._id}>{sub.name}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Thumbnail Upload */}
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-2" htmlFor="thumbnail">Thumbnail</label>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleThumbnailChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              />
+            </div>
+            <div className="flex-1">
+              <input
+                type="text"
+                value={thumbnailURL}
+                onChange={handleThumbnailLinkChange}
+                placeholder="Enter image URL"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg"
+              />
+            </div>
           </div>
-
- {/* Thumbnail Section */}
- <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Thumbnail</label>
-          <div className="flex gap-4 mb-4">
-            <button
-              type="button"
-              onClick={() => setThumbnailUpload(true)}
-              className={`px-4 py-2 rounded-lg ${thumbnailUpload ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-            >
-              Upload Thumbnail
-            </button>
-            <button
-              type="button"
-              onClick={() => setThumbnailUpload(false)}
-              className={`px-4 py-2 rounded-lg ${!thumbnailUpload ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-            >
-              Thumbnail URL
-            </button>
-          </div>
-
-          {thumbnailUpload ? (
-            <input
-              type="file"
-              onChange={handleThumbnailChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            />
-          ) : (
-            <input
-              type="text"
-              value={thumbnailURL}
-              onChange={handleThumbnailLinkChange}
-              placeholder="Enter thumbnail URL"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg"
-            />
-          )}
-
-          {thumbnailURL && !thumbnailUpload && (
-            <img
-              src={thumbnailURL}
-              alt="Thumbnail"
-              className="w-32 h-32 object-cover rounded-lg mt-4"
-            />
-          )}
-
-          {thumbnailImage && thumbnailUpload && (
+          {thumbnailImage && (
             <img
               src={thumbnailURL}
               alt="Thumbnail Preview"
-              className="w-32 h-32 object-cover rounded-lg mt-4"
+              className="mt-4 w-32 h-32 object-cover rounded-lg"
             />
           )}
         </div>
 
-        {/* Images Section */}
+        {/* Images Upload */}
         <div className="mb-4">
-          <label className="block text-gray-700 mb-2">Upload Images</label>
-          <div className="flex gap-4 mb-4">
-            <button
-              type="button"
-              onClick={() => setIsImageUpload(true)}
-              className={`px-4 py-2 rounded-lg ${isImageUpload ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-            >
-              Upload Images
-            </button>
-            <button
-              type="button"
-              onClick={() => setIsImageUpload(false)}
-              className={`px-4 py-2 rounded-lg ${!isImageUpload ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
-            >
-              Image URLs
-            </button>
-          </div>
-
-          {isImageUpload ? (
-            <>
+          <label className="block text-gray-700 mb-2">Product Images</label>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
               <input
                 type="file"
+                accept="image/*"
                 multiple
                 onChange={handleImageChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               />
-              <div className="flex flex-wrap gap-4 mt-4">
+              {errors.images && <p className="text-red-500 text-sm">{errors.images}</p>}
+              <div className="mt-4 flex flex-wrap gap-4">
                 {imageURLs.map((url, index) => (
                   <img
                     key={index}
                     src={url}
-                    alt={`Selected ${index}`}
+                    alt={`Product Image ${index + 1}`}
                     className="w-32 h-32 object-cover rounded-lg"
                   />
                 ))}
               </div>
-            </>
-          ) : (
-            <div>
+            </div>
+            <div className="flex-1">
               <input
                 type="text"
                 value={imageLink}
@@ -528,47 +511,41 @@ const UploadProduct = () => {
                 placeholder="Enter image URL"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg"
               />
-              {imageLink && (
-                <div className="mt-4">
-                  <img
-                    src={imageLink}
-                    alt="Provided"
-                    className="w-32 h-32 object-cover rounded-lg"
-                  />
-                </div>
-              )}
               <button
                 type="button"
-                onClick={() => setImageLinks((prevLinks) => [...prevLinks, imageLink])}
+                onClick={() => setImageLinks([...imageLinks, imageLink])}
                 className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
               >
-                Add Image URL
+                Add URL
               </button>
-              <div className="flex flex-wrap gap-4 mt-4">
+              <div className="mt-4 flex flex-wrap gap-4">
                 {imageLinks.map((link, index) => (
                   <img
                     key={index}
                     src={link}
-                    alt={`URL ${index}`}
+                    alt={`Product Image ${index + 1}`}
                     className="w-32 h-32 object-cover rounded-lg"
                   />
                 ))}
               </div>
             </div>
-          )}
+          </div>
         </div>
 
         {/* Submit Button */}
-        <button
-          type="button"
-          onClick={handleUpload}
-          className="px-6 py-3 bg-blue-500 text-white rounded-lg"
-        >
-          Upload Product
-        </button>
+        <div className="flex justify-center">
+          <button
+            type="button"
+            onClick={handleUpload}
+            className={`px-6 py-3 bg-green-500 text-white rounded-lg ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={loading}
+          >
+            {loading ? 'Uploading...' : 'Upload Product'}
+          </button>
+        </div>
       </div>
     </div>
   );
-};
+}
 
 export default UploadProduct;

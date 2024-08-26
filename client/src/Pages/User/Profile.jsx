@@ -20,7 +20,7 @@ function Profile() {
       navigate('/');
     }
   }, [navigate, user]);
-  
+
   const [formData, setFormData] = useState({
     fullName: user ? user.fullName : '',
     email: user ? user.email : '',
@@ -61,7 +61,7 @@ function Profile() {
     setUploading(true);
     const storageRef = ref(storage, `${user.email}/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
-  
+
     uploadTask.on(
       'state_changed',
       (snapshot) => {
@@ -86,47 +86,48 @@ function Profile() {
     fileInputRef.current.click();
   };
 
- const handleSubmit = async (e) => {
-  e.preventDefault();
-  setError('');
-  setPasswordError({ current: '', new: '' });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setPasswordError({ current: '', new: '' });
 
-  if (formData.currentPassword && !formData.newPassword) {
-    setPasswordError((prev) => ({ ...prev, new: 'Enter both fields' }));
-    return;
-  }
+    if (formData.currentPassword && !formData.newPassword) {
+      setPasswordError((prev) => ({ ...prev, new: 'Enter both fields' }));
+      return;
+    }
 
-  if (!formData.currentPassword && formData.newPassword) {
-    setPasswordError((prev) => ({ ...prev, current: 'Enter both fields' }));
-    return;
-  }
+    if (!formData.currentPassword && formData.newPassword) {
+      setPasswordError((prev) => ({ ...prev, current: 'Enter both fields' }));
+      return;
+    }
 
-  try {
-    const response = await axios.put(`/api/user/edit-user`, formData);
-    dispatch(setUser({
-      fullName: response.data.fullName,
-      email: response.data.email,
-      profile: response.data.profile,
-      role : response.data.role
-    }));
-    toast.success('Profile updated successfully!');
-  } catch (err) {
-    setError(err.response?.data?.message || 'An error occurred');
-    toast.error(err.response?.data?.message || 'An error occurred');
-  }
-};
+    try {
+      const response = await axios.put(`/api/user/edit-user`, formData);
+      dispatch(setUser({
+        fullName: response.data.fullName,
+        email: response.data.email,
+        profile: response.data.profile,
+        role: response.data.role
+      }));
+      toast.success('Profile updated successfully!');
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred');
+      toast.error(err.response?.data?.message || 'An error occurred');
+    }
+  };
+
   if (!user) {
     return null; // or a loading spinner or placeholder
   }
 
   return (
-    <section className='profile'>
+    <section className='profile p-14 md:p-10 lg:p-16'>
       <div className='flex flex-col items-center justify-center'>
         <div className='relative' onClick={handleProfileClick}>
           <img
             src={formData.profile}
             alt='profile'
-            className='rounded-full mt-10 mb-5 cursor-pointer hover:opacity-80 transition-opacity duration-200 w-[8rem] h-[8rem]'
+            className='rounded-full mt-10 mb-5 cursor-pointer hover:opacity-80 transition-opacity duration-200 w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48'
           />
           <FaCamera className='absolute bottom-0 right-0 text-white bg-blue-500 p-2 rounded-full text-xl cursor-pointer' />
         </div>
@@ -138,18 +139,17 @@ function Profile() {
           className='hidden'
         />
         <div>
-          <h2 className='text-xl font-bold'>{formData.fullName}</h2>
+          <h2 className='text-lg font-bold sm:text-xl lg:text-2xl'>{formData.fullName}</h2>
         </div>
-        <div className='my-10 w-full'>
-          <form className='flex flex-col gap-5 w-1/2 mx-auto' onSubmit={handleSubmit}>
-           
+        <div className='my-10 w-full max-w-lg'>
+          <form className='flex flex-col gap-5' onSubmit={handleSubmit}>
             <input
               type='text'
               name='fullName'
               value={formData.fullName}
               onChange={handleInputChange}
               placeholder='Enter Full Name'
-              className='text-center border shadow-lg rounded-lg px-12 py-2'
+              className='text-center border shadow-lg rounded-lg px-4 py-2'
             />
             <input
               type='email'
@@ -157,7 +157,7 @@ function Profile() {
               value={formData.email}
               onChange={handleInputChange}
               placeholder='Enter Email'
-              className='text-center border shadow-lg rounded-lg px-12 py-2'
+              className='text-center border shadow-lg rounded-lg px-4 py-2'
               disabled
             />
             <div className='relative'>
@@ -167,7 +167,7 @@ function Profile() {
                 value={formData.currentPassword}
                 onChange={handleInputChange}
                 placeholder='Current Password'
-                className={`text-center border shadow-lg rounded-lg px-12 py-2 w-full ${passwordError.current ? 'border-red-500' : ''}`}
+                className={`text-center border shadow-lg rounded-lg px-4 py-2 w-full ${passwordError.current ? 'border-red-500' : ''}`}
               />
               {showCurrentPassword ? (
                 <FaEyeSlash
@@ -188,7 +188,7 @@ function Profile() {
                 value={formData.newPassword}
                 onChange={handleInputChange}
                 placeholder='New Password'
-                className={`text-center border shadow-lg rounded-lg px-12 py-2 w-full  ${passwordError.new ? 'border-red-500' : ''}`}
+                className={`text-center border shadow-lg rounded-lg px-4 py-2 w-full ${passwordError.new ? 'border-red-500' : ''}`}
               />
               {showNewPassword ? (
                 <FaEyeSlash
@@ -197,7 +197,7 @@ function Profile() {
                 />
               ) : (
                 <FaEye
-                  onClick={() => setShowNewPassword()}
+                  onClick={() => setShowNewPassword(true)}
                   className='absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer'
                 />
               )}
@@ -211,18 +211,18 @@ function Profile() {
             </button>
           </form>
         </div>
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="colored"
-          />
+        <ToastContainer
+          position='top-right'
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme='colored'
+        />
       </div>
     </section>
   );

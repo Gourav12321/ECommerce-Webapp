@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const { Category } = require('../model/Category.model');
-const {createProduct,getProducts,updateProduct,deleteProduct,getProductById} = require('../controller/Product.controller');
+const {createProduct,getProducts,updateProduct,deleteProduct,getProductById, searchProducts} = require('../controller/Product.controller');
 router.post('/products',createProduct);
 router.get('/products',getProducts);
 router.get('/products/:id',getProductById);
 router.put('/products/:id', updateProduct);
 router.delete('/products/:id', deleteProduct);
+router.get('/search', searchProducts);
+
 router.get('/categories/:categoryId/subcategories', async (req, res) => {
     const { categoryId } = req.params;
     try {

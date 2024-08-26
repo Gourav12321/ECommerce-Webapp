@@ -61,75 +61,93 @@ const AllUsers = () => {
   }
 
   return (
-    <div>
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead>
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Profile</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user._id}>
-              <td className='px-6  items-center py-3'>
-                <img src={user.profile} alt="" className='w-12 h-12 rounded-full'/>
-              </td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.fullName}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.role}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                <button onClick={() => handleEdit(user)} className="text-indigo-600 hover:text-indigo-900 mr-2" aria-label="Edit User">
-                  <FaEdit />
-                </button>
-                <button onClick={() => handleDelete(user._id)} className="text-red-600 hover:text-red-900" aria-label="Delete User">
-                  <FaTrash />
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="lg:p-4 ml-0 pl-0 pt-10 lg:pt-0">
+      <div className="grid gap-4 lg:gap-16 lg:grid-cols-2 xl:grid-cols-3">
+        {users.map((user) => (
+          <div
+            key={user._id}
+            className="bg-white p-4 rounded-lg shadow-md border border-gray-200 md:w-[20rem] w-[18rem]"
+          >
+            <div className="flex items-center mb-4 md:p-4 p-1 gap-3">
+              <img
+                src={user.profile}
+                alt={user.fullName}
+                className="w-16 h-16 rounded-full"
+              />
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  {user.fullName}
+                </h3>
+                <p className="text-sm text-gray-500">{user.email}</p>
+                <p className="text-sm text-gray-500">{user.role}</p>
+              </div>
+            </div>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={() => handleEdit(user)}
+                className="text-indigo-600 hover:text-indigo-900"
+                aria-label="Edit User"
+              >
+                <FaEdit />
+              </button>
+              <button
+                onClick={() => handleDelete(user._id)}
+                className="text-red-600 hover:text-red-900"
+                aria-label="Delete User"
+              >
+                <FaTrash />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
 
       {editingUser && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
-          <div className="bg-white p-8 rounded shadow-md">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded shadow-md w-80">
             <h2 className="text-lg font-bold mb-4">Edit User</h2>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Name</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Name
+              </label>
               <input
                 type="text"
                 value={editingUser.fullName}
-                onChange={(e) => setEditingUser({ ...editingUser, fullName: e.target.value })}
+                onChange={(e) =>
+                  setEditingUser({ ...editingUser, fullName: e.target.value })
+                }
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
               />
             </div>
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700">Role</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Role
+              </label>
               <select
                 value={editingUser.role}
-                onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
+                onChange={(e) =>
+                  setEditingUser({ ...editingUser, role: e.target.value })
+                }
                 className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm"
               >
                 <option value="General">General</option>
                 <option value="Admin">Admin</option>
               </select>
             </div>
-            <button
-              onClick={handleSave}
-              className="bg-blue-500 text-white px-4 py-2 rounded mr-2"
-            >
-              Save
-            </button>
-            <button
-              onClick={() => setEditingUser(null)}
-              className="bg-gray-300 text-gray-800 px-4 py-2 rounded"
-            >
-              Cancel
-            </button>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={handleSave}
+                className="bg-blue-500 text-white px-4 py-2 rounded"
+              >
+                Save
+              </button>
+              <button
+                onClick={() => setEditingUser(null)}
+                className="bg-gray-300 text-gray-800 px-4 py-2 rounded"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       )}
