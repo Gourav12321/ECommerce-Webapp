@@ -15,6 +15,7 @@ import UploadProduct from './Pages/Admin/UploadProduct';
 import { ToastContainer } from 'react-toastify';
 import AdminLayout from './AdminLayout';
 import AdminRoute from './Pages/Admin/AdminRoutes';
+import CreateCategory from './Pages/Admin/createCategory';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path='all-users' element={<AllUsers />} />
           <Route path='all-products' element={<AllProduct />} />
           <Route path='upload-product' element={<UploadProduct />} />
+          <Route path='create-category' element={<CreateCategory />} />
         </Route>
       </Routes>
       <ToastContainer />

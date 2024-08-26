@@ -42,6 +42,18 @@ const Sidebar = () => {
         >
           Upload Product
         </NavLink>
+        <NavLink
+          to="create-category"
+          className={({ isActive }) =>
+            `block px-4 py-2 rounded-md transition-colors duration-300 ${
+              isActive
+                ? 'bg-blue-500 text-white'
+                : 'text-gray-600 hover:bg-blue-100'
+            }`
+          }
+        >
+          Create Category
+        </NavLink>
       </nav>
     </div>
   );

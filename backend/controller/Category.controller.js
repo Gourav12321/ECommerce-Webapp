@@ -1,5 +1,5 @@
-const {Category} = require("../model/Category.model");
-const {SubCategory} = require("../model/Category.model");
+// Category Controller (Category.controller.js)
+const { Category, SubCategory } = require('../model/Category.model');
 
 // Create a new category
 const createCategory = async (req, res) => {
@@ -54,19 +54,27 @@ const deleteCategory = async (req, res) => {
   }
 };
 
+// Subcategory Controller (SubCategory.controller.js)
 
-
-// Create a new subcategory
 const createSubCategory = async (req, res) => {
   try {
     const newSubCategory = new SubCategory(req.body);
     await newSubCategory.save();
-    res.status(201).json({ success: true,  newSubCategory });
+
+    // Find the category and add the new subcategory
+    const category = await Category.findById(req.body.categoryId);
+    if (category) {
+      category.subcategories.push(newSubCategory._id);
+      await category.save();
+    }
+
+    res.status(201).json({ success: true, subcategory: newSubCategory });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: 'Failed to create subcategory' });
   }
 };
+
 
 // Get all subcategories
 const getSubCategories = async (req, res) => {
