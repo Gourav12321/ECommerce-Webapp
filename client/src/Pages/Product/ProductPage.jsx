@@ -136,7 +136,7 @@ const ProductPage = () => {
       {/* Customer Reviews Section */}
       <div className="mt-10 w-full lg:px-10 md:px-1 overflow-hidden ">
         <h2 className="text-2xl font-semibold mb-4">Customer Reviews</h2>
-        {product.review === null ?
+        {product.reviews.length > 0  ?
         <Swiper
           spaceBetween={20}
           slidesPerView={1}

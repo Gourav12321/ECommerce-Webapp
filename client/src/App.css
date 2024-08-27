@@ -31,37 +31,21 @@
 }
 
 
-/* styles.css or any other stylesheet you are using */
-.flex1 {
-  display: flex;
-  align-items: center; /* Ensures vertical alignment */
+/* Add this to your global styles or a specific CSS/SCSS file */
+.category-list {
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.category-list::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, and Opera */
+}
+
+.category-item {
+  scroll-snap-align: start;
 }
 
 
-
-
-  .react-image-magnify__lens {
-    position: absolute;
-    border: 1px solid #000;
-    border-radius: 4px;
-    background: rgba(0, 0, 0, 0.5);
-    pointer-events: none;
-  }
-  
-  .react-image-magnify__large-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -50%);
-    transition: transform 0.2s ease;
-  }
-  
-  .react-image-magnify__enlarged-image-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    overflow: hidden;
-    pointer-events: none;
-  }
   

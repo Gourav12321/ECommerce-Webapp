@@ -18,6 +18,7 @@ import AdminRoute from './Pages/Admin/AdminRoutes';
 import CreateCategory from './Pages/Admin/createCategory';
 import ProductPage from './Pages/Product/ProductPage';
 import 'react-toastify/dist/ReactToastify.css';
+import './App.css'
 function App() {
   return (
     <BrowserRouter>
@@ -39,6 +40,7 @@ function App() {
         </Route>
         <Route path='/product/:id' element={<MainLayout><ProductPage /></MainLayout>} />
     
+        
       </Routes>
       <ToastContainer />
     </BrowserRouter>

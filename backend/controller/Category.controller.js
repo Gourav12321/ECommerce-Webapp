@@ -19,10 +19,11 @@ const getCategories = async (req, res) => {
     const categories = await Category.find().populate('subcategories');
     res.status(200).json({ success: true, categories });
   } catch (error) {
-    console.error(error);
+    console.error('Failed to retrieve categories:', error);
     res.status(500).json({ success: false, message: 'Failed to retrieve categories' });
   }
 };
+
 
 // Update a category by ID
 const updateCategory = async (req, res) => {

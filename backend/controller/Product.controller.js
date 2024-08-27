@@ -1,3 +1,4 @@
+const { Category } = require("../model/Category.model");
 const Product = require("../model/Product.model");
 
 // Create a new product
@@ -81,6 +82,34 @@ const getProducts = async (req, res) => {
   }
 };
 
+const getProductbyCategory = async (req, res) => {
+  const { categoryName } = req.params; // Extract category name from query parameters
+
+  try {
+    // Find the category by name
+    const category = await Category.findOne({ name: categoryName });
+    if (!category) {
+      return res.status(404).json({ success: false, message: 'Category not found' });
+    }
+
+    // Fetch products associated with the found category
+    const products = await Product.find({ category: category._id })
+      .populate({
+        path: 'category',
+        populate: {
+          path: 'subcategories',
+          model: 'SubCategory'
+        }
+      });
+
+    res.status(200).json({ success: true, products });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Failed to retrieve products', error: error.message });
+  }
+};
+
+
 // Get a single product by ID
 const getProductById = async (req, res) => {
   const { id } = req.params;
@@ -142,7 +171,7 @@ const deleteProduct = async (req, res) => {
 // Search products by various fields
 const searchProducts = async (req, res) => {
   try {
-    const { query } = req.query; // Get search query from the request
+    const { query } = req.query;
 
     const products = await Product.find({
       $or: [
@@ -152,7 +181,7 @@ const searchProducts = async (req, res) => {
         { 'subcategory.name': { $regex: query, $options: 'i' } },
         { tags: { $in: [query] } }
       ]
-    });
+    }).populate('category');
 
     res.status(200).json({ success: true, products });
   } catch (error) {
@@ -195,5 +224,6 @@ module.exports = {
   getProducts,
   getProductById,
   updateProduct,
-  deleteProduct
+  deleteProduct,
+  getProductbyCategory
 };
