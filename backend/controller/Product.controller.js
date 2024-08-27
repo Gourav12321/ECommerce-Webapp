@@ -160,8 +160,36 @@ const searchProducts = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to search products', error: error.message });
   }
 };
+const addReview = async (req, res) => {
+  const { id } = req.params;  // Product ID
+  const { rating, comment, reviewerName, reviewerEmail } = req.body;
+  try {
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Add the new review to the reviews array
+    const newReview = {
+      rating,
+      comment,
+      reviewerName,
+      reviewerEmail,
+    };
+
+    
+    product.reviews.push(newReview);
+    await product.save();
+
+    res.status(200).json({ success: true, message: 'Review added successfully', product });
+  } catch (error) {
+    console.error('Error adding review:', error);
+    res.status(500).json({ message: 'Failed to add review', error });
+  }
+};
 
 module.exports = {
+  addReview,
   searchProducts,
   createProduct,
   getProducts,

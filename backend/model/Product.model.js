@@ -24,8 +24,9 @@ const reviewSchema = new Schema({
   reviewerEmail: {
     type: String,
     required: true,
-    match: /.+\@.+\..+/  // Basic email validation
+    match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, 'Please fill a valid email address']
   }
+  
 });
 
 // Dimensions Schema

@@ -8,18 +8,17 @@ import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../Pages/Redux/userSlice';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import debounce from 'lodash.debounce'; // Add lodash.debounce
+import SearchBar from './SearchBar';
 
 function Navbar() {
-    const [search, setSearch] = useState('');
-    const [searchResults, setSearchResults] = useState([]);
-    const [icon, setIcon] = useState(false);
+  const [icon, setIcon] = useState(false);
+  const inputRef = useRef(null);
+
     const [cart, setCart] = useState(0);
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarOpen1, setSidebarOpen1] = useState(false);
     const sidebarRef = useRef(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const inputRef = useRef(null);
     const dropdownRef = useRef(null);
     const user = useSelector((state) => state.user.user);
     const dispatch = useDispatch();
@@ -28,34 +27,10 @@ function Navbar() {
         setCart(cart + 1);
     };
 
-    const handleClick = () => {
-        setIcon(!icon);
-    };
+  
 
-    // Use debounce for search input change
-    const debouncedSearch = useRef(debounce(async (query) => {
-        if (query.trim()) {
-            try {
-                const response = await fetch(`/api/search?query=${encodeURIComponent(query.trim())}`);
-                const data = await response.json();
-                if (data.success) {
-                    setSearchResults(data.products);
-                } else {
-                    setSearchResults([]);
-                }
-            } catch (error) {
-                console.error('Error fetching search results:', error);
-                setSearchResults([]);
-            }
-        } else {
-            setSearchResults([]);
-        }
-    }, 300)).current; // Debounce delay of 300ms
 
-    const handleChange = (e) => {
-        setSearch(e.target.value);
-        debouncedSearch(e.target.value); // Call debounced function
-    };
+  
 
     const handleClickOutside = (event) => {
         if (inputRef.current && !inputRef.current.contains(event.target)) {
@@ -110,52 +85,9 @@ function Navbar() {
                         </div>
                     </Link>
                 </div>
-                <div className='lg:flex hidden relative w-[45vw] h-[40px] items-center'>
-                    <span
-                        className={`absolute transform -translate-y-1/2 text-xl top-1/2 ${icon ? '-translate-x-1/2 right-6 search z-10' : '-translate-x-1/2 left-[58%]'}`}
-                        onClick={handleClick}
-                    >
-                        <IoSearch className='text-gray-700' />
-                    </span>
-                    <div
-                        className={`absolute transform -translate-y-1/2 text-xl top-1/2 ${icon ? 'w-[80px] h-10 rounded-r-full bg-light-blue-200 -right-12 -translate-x-[60%] search' : 'hidden'}`}
-                    ></div>
-                    <input
-                        type="text"
-                        className='text-black h-[40px] lg:w-[45vw] hidden lg:inline rounded-full text-center border border-gray-300'
-                        id='search'
-                        name='search'
-                        value={search}
-                        placeholder='Search'
-                        onChange={handleChange}
-                        ref={inputRef}
-                        onClick={handleClick}
-                    />
-                    <div className={`${icon === true ? 'w-full h-[300px] flex z-30 absolute bg-white transform top-[3.1rem] ' : ''}`}>
-                        {search === '' && !icon ?
-                            <div className={`${icon === false ? 'hidden' : 'flex z-20'}`}>
-                            </div> :
-                            <div className={`absolute w-full bg-white border h-[100%] overflow-y-auto border-gray-300 shadow-lg mt-2 ${icon ? '' : 'hidden'}`}>
-                                {searchResults.length > 0 ? (
-                                    <ul>
-                                        {searchResults.map((product) => (
-                                            <li key={product._id} className="p-2 border-b hover:bg-gray-100">
-                                                <Link to={`/product/${product._id}`} className="flex items-center">
-                                                    <img src={product.thumbnail} alt={product.title} className="w-12 h-12 object-cover mr-2" />
-                                                    <div className="text-sm">
-                                                        <p className="font-semibold">{product.title}</p>
-                                                        <p>{product.description.slice(0, 50)}...</p>
-                                                    </div>
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <div className="p-4 text-center">No results found</div>
-                                )}
-                            </div>
-                        }
-                    </div>
+
+                <div className='hidden lg:flex'>
+                <SearchBar/>
                 </div>
                 <div className='flex justify-evenly lg:w-[30%] w-[50%] items-center lg:pr-10'>
                     {user ? (
@@ -227,52 +159,8 @@ function Navbar() {
             )}
         </div>
         <div className='lg:hidden block relative items-center w-[75%]'>
-                    <span
-                        className={`absolute transform -translate-y-1/2 text-xl top-1/2 ${icon ? '-translate-x-1/2 right-6 search z-10' : '-translate-x-1/2 left-[68%]'}`}
-                        onClick={handleClick}
-                    >
-                        <IoSearch className='text-gray-700' />
-                    </span>
-                    <div
-                        className={`absolute transform -translate-y-1/2 text-xl top-1/2 ${icon ? 'w-[80px] h-10 rounded-r-full bg-light-blue-200 -right-12 -translate-x-[60%] search' : 'hidden'}`}
-                    ></div>
-                    <input
-                        type="text"
-                        className='text-black h-[40px] w-full  rounded-full text-center border border-gray-300'
-                        id='search'
-                        name='search'
-                        value={search}
-                        placeholder='Search'
-                        onChange={handleChange}
-                        ref={inputRef}
-                        onClick={handleClick}
-                    />
-                    <div className={`${icon === true ? 'w-full h-[300px] flex z-30 absolute bg-white transform top-[3.1rem] ' : ''}`}>
-                        {search === '' && !icon ?
-                            <div className={`${icon === false ? 'hidden' : 'flex z-20'}`}>
-                            </div> :
-                            <div className={`absolute w-full bg-white border h-[100%] overflow-y-auto border-gray-300 shadow-lg mt-0 ${icon ? '' : 'hidden'}`}>
-                                {searchResults.length > 0 ? (
-                                    <ul>
-                                        {searchResults.map((product) => (
-                                            <li key={product._id} className="p-2 border-b hover:bg-gray-100">
-                                                <Link to={`/product/${product._id}`} className="flex items-center">
-                                                    <img src={product.thumbnail} alt={product.title} className="w-12 h-12 object-cover mr-2" />
-                                                    <div className="text-sm">
-                                                        <p className="font-semibold">{product.title}</p>
-                                                        <p>{product.description.slice(0, 50)}...</p>
-                                                    </div>
-                                                </Link>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                ) : (
-                                    <div className="p-4 text-center">No results found</div>
-                                )}
-                            </div>
-                        }
-                    </div>
-                </div>
+            <SearchBar/>
+        </div>
         </div>
             <ToastContainer />
         </div>

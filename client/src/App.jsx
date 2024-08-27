@@ -38,7 +38,7 @@ function App() {
 
         </Route>
         <Route path='/product/:id' element={<MainLayout><ProductPage /></MainLayout>} />
-
+    
       </Routes>
       <ToastContainer />
     </BrowserRouter>
