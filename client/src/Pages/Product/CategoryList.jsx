@@ -36,7 +36,7 @@ const CategoryList = () => {
   };
 
   return (
-    <div className="relative container mx-auto p-4 bg-slate-100 border-b-4 rounded-2xl">
+    <div className="relative container mx-auto p-4 lg:pt-4 md:pt-16 pt-[5rem] bg-slate-100 border-b-4 rounded-2xl">
       {/* Left Scroll Button */}
       <button
         className="absolute -left-6 top-[40%] transform -translate-y-1/2 z-10 hidden lg:block bg-gray-200 hover:bg-gray-300 p-2 rounded-full shadow-md"
@@ -55,7 +55,7 @@ const CategoryList = () => {
 
       {/* Category List */}
       <div
-        className="category-list flex gap-16 overflow-x-auto"
+        className="category-list flex lg:gap-12 md:gap-6 gap-4 overflow-x-auto"
         ref={categoryListRef}
       >
         {loading ? (
@@ -67,11 +67,8 @@ const CategoryList = () => {
           ))
         ) : (
           categoryProduct.map((product) => (
-            <Link
-              to={`/product-category?category=${product.name}`}
-              className="cursor-pointer"
-              key={product.name}
-            >
+            
+            <Link to={`/product-category?category=${product._id}`} className="cursor-pointer" key={product.name}>
               <div className="category-item w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden p-4 bg-slate-200 flex items-center justify-center hover:shadow-lg transition-all">
                 <img
                   src={product.photo}
@@ -83,6 +80,7 @@ const CategoryList = () => {
                 {product.name}
               </p>
             </Link>
+
           ))
         )}
       </div>

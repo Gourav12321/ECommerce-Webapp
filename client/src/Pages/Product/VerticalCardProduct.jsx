@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Link } from 'react-router-dom';
 
+import 'swiper/css/pagination';
+import { Pagination} from 'swiper/modules';
+
 const VerticalCardProduct = ({ heading, categoryName }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,8 +38,9 @@ const VerticalCardProduct = ({ heading, categoryName }) => {
           <p className="text-red-500">{error}</p>
         ) : (
           <Swiper
-            spaceBetween={10}
-            slidesPerView={1} // Default view
+          spaceBetween={30}
+
+          slidesPerView={1}
             breakpoints={{
               640: {
                 slidesPerView: 2, // For small screens
@@ -50,6 +54,8 @@ const VerticalCardProduct = ({ heading, categoryName }) => {
             }}
             pagination={{ clickable: true }}
             navigation={true}
+            modules={[Pagination]}
+            className='h-[16rem]'
           >
             {products.length > 0 ? (
               products.map((product) => (

@@ -13,6 +13,7 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
   console.log("Database connected");
@@ -20,14 +21,7 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
   console.log(error);
 });
 
-app.use(session({
-  secret: 'your_secret_key',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: false }
-}));
 
-app.use(express.json());
 
 // Routes
 app.use('/api/user', UserAuthRoute);

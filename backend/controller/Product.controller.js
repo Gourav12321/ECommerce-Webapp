@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const { Category } = require("../model/Category.model");
 const Product = require("../model/Product.model");
 
@@ -75,7 +76,7 @@ const getProducts = async (req, res) => {
           model: 'SubCategory'
         }
       });
-    res.status(200).json({ success: true, products });
+    res.status(200).json(products );
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: 'Failed to retrieve products', error: error.message });
@@ -108,6 +109,39 @@ const getProductbyCategory = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to retrieve products', error: error.message });
   }
 };
+
+
+const ObjectId = mongoose.Types.ObjectId;
+
+const getProductsByCategory = async (req, res) => {
+    try {
+        const categoryParam = req.params.category;
+        if (!categoryParam) {
+            return res.status(400).json({ error: 'Category parameter is required' });
+        }
+
+
+        const categoryIds = categoryParam.split(',').map(id => {
+          
+          return id.trim();
+      });
+
+        const products = await Product.find({ category: { $in: categoryIds } }) .populate({
+          path: 'category',
+          populate: {
+            path: 'subcategories',
+            model: 'SubCategory'
+          }
+        });
+        res.json(products);
+    } catch (error) {
+        console.error('Error fetching products by category:', error);
+        res.status(500).json({ error: 'Error fetching products by category' });
+    }
+};
+
+
+
 
 
 // Get a single product by ID
@@ -225,5 +259,6 @@ module.exports = {
   getProductById,
   updateProduct,
   deleteProduct,
-  getProductbyCategory
+  getProductbyCategory,
+  getProductsByCategory 
 };

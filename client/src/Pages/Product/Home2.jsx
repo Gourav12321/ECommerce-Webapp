@@ -23,7 +23,7 @@ const Home2= () => {
 
   return (
    
-          categoryProduct.map((product) => (
+          categoryProduct.map((product, index) => (
             <VerticalCardProduct heading={product.name} categoryName={product.name}/>
           ))
      

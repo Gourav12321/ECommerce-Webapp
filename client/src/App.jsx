@@ -19,6 +19,7 @@ import CreateCategory from './Pages/Admin/createCategory';
 import ProductPage from './Pages/Product/ProductPage';
 import 'react-toastify/dist/ReactToastify.css';
 import './App.css'
+import ProductCategory from './Pages/Product/ProductCategory';
 function App() {
   return (
     <BrowserRouter>
@@ -39,7 +40,8 @@ function App() {
 
         </Route>
         <Route path='/product/:id' element={<MainLayout><ProductPage /></MainLayout>} />
-    
+        <Route path='/product-category' element={<MainLayout><ProductCategory /></MainLayout>} />
+
         
       </Routes>
       <ToastContainer />

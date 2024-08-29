@@ -10,6 +10,7 @@ const {
   searchProducts,
   addReview,
   getProductbyCategory,
+  getProductsByCategory,
 } = require("../controller/Product.controller");
 router.post("/products", createProduct);
 router.get("/products", getProducts);
@@ -19,7 +20,7 @@ router.delete("/products/:id", deleteProduct);
 router.get("/search", searchProducts);
 router.post("/products/:id/reviews", addReview);
 router.get('/products/category/:categoryName', getProductbyCategory);
-
+router.get('/product/category/:category', getProductsByCategory);
 router.get("/categories/:categoryId/subcategories", async (req, res) => {
   const { categoryId } = req.params;
   try {
