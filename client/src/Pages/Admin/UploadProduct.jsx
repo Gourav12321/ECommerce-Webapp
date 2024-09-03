@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { storage } from '../../Firebase.js'; // Import storage from your Firebase configuration
-
+import { storage } from '../../Firebase.js';
+import {  toast } from 'react-toastify';
 const UploadProduct = () => {
   const [product, setProduct] = useState({
     title: '',
@@ -113,7 +113,7 @@ const UploadProduct = () => {
         }));
       }
     });
-
+    toast.success('Photo Uploaded!')
     setSelectedImages(files);
   };
 
@@ -138,6 +138,7 @@ const UploadProduct = () => {
         thumbnail: 'Please select a valid image file.'
       }));
     }
+    toast.success('Photo Uploaded!')
   };
 
   const handleThumbnailLinkChange = (e) => {
@@ -149,7 +150,6 @@ const UploadProduct = () => {
     setErrors({});
 
     try {
-      // Handle thumbnail upload
       let thumbnailUrl = '';
 
       if (thumbnailUpload && thumbnailImage) {
@@ -160,7 +160,6 @@ const UploadProduct = () => {
         thumbnailUrl = thumbnailURL;
       }
 
-      // Handle image uploads
       let imageUrls = [];
 
       if (isImageUpload) {
@@ -173,15 +172,13 @@ const UploadProduct = () => {
         imageUrls = imageLinks;
       }
 
-      // Prepare product data
       const productData = { ...product, thumbnail: thumbnailUrl, images: imageUrls };
 
-      // Send product data to your backend
       await axios.post('/api/products', productData);
-      alert('Product uploaded successfully!');
+      toast.success('Product uploaded successfully!');
     } catch (error) {
       console.error(error);
-      alert('Failed to upload product.');
+      toast.error('Failed to upload product.');
     } finally {
       setLoading(false);
     }

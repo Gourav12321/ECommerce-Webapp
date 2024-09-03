@@ -1,7 +1,6 @@
   const mongoose = require('mongoose');
   const { Schema } = mongoose;
 
-  // Review Schema
   const reviewSchema = new Schema({
     rating: {
       type: Number,
@@ -29,7 +28,6 @@
     
   });
 
-  // Dimensions Schema
   const dimensionsSchema = new Schema({
     width: {
       type: Number,
@@ -42,7 +40,6 @@
     }
   });
 
-  // Product Schema
   const productSchema = new Schema({
     title: {
       type: String,
@@ -63,8 +60,7 @@
     },
     discountPercentage: {
       type: Number,
-      min: 0,
-      max: 100
+      
     },
     rating: {
       type: Number,
@@ -118,7 +114,6 @@
     images: [String]
   }, { timestamps: true });
 
-  // Index for SKU
   productSchema.index({ sku: 1 });
 
   const Product = mongoose.model('Product', productSchema);

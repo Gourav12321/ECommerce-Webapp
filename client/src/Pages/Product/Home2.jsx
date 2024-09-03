@@ -10,7 +10,7 @@ const Home2= () => {
     try {
       const response = await axios.get('/api/categories');
     
-      setCategoryProduct(response.data.categories); // Adjust according to the actual response structure
+      setCategoryProduct(response.data.categories);
     } catch (error) {
       console.error('Error fetching category products:', error);
     }
@@ -24,7 +24,9 @@ const Home2= () => {
   return (
    
           categoryProduct.map((product, index) => (
+            <div key={index}>
             <VerticalCardProduct heading={product.name} categoryName={product.name}/>
+            </div>
           ))
      
   );

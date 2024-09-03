@@ -5,8 +5,7 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../Redux/userSlice.js';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import {  toast } from 'react-toastify';
 
 function OAuthLogin() {
   const dispatch = useDispatch();
@@ -22,11 +21,9 @@ function OAuthLogin() {
         email: result.user.email,
       };
   
-      // Send data to the backend for storage
       const response = await axios.post('/api/user/oAuthLogin', payload);
       toast.success('Login Successfully');
       
-      // Set user in Redux store
       dispatch(setUser({
         fullName: response.data.user.fullName,
         email: response.data.user.email,
@@ -40,10 +37,9 @@ function OAuthLogin() {
       } else {
         toast.success('Login Successfully');
         
-        // Delay navigation to allow the success toast to be shown
         setTimeout(() => {
           navigate('/');
-        }, 15000); // 1500ms delay
+        }, 15000);
       }
     } catch (error) {
       console.error("Error in OAuth:", error.response?.data || error.message);
@@ -65,18 +61,7 @@ function OAuthLogin() {
         />
         Continue With Google
       </button>
-      <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="colored"
-          />
+     
     </div>
   );
 }

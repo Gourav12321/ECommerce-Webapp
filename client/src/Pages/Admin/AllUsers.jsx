@@ -29,16 +29,18 @@ const AllUsers = () => {
 
   const handleDelete = async (userId) => {
     if (window.confirm('Are you sure you want to delete this user?')) {
+      toast.success('User deleted successfully');
+
       try {
         await axios.delete(`/api/user/delete-user/${userId}`);
-        toast.success('User deleted successfully');
 
-        // Refresh user list
         const response = await axios.get('/api/user/users');
         setUsers(response.data);
+
       } catch (error) {
         toast.error('Failed to delete user');
       }
+      
     }
   };
 
@@ -48,7 +50,6 @@ const AllUsers = () => {
       toast.success('User updated successfully');
       setEditingUser(null);
 
-      // Refresh user list
       const response = await axios.get('/api/user/users');
       setUsers(response.data);
     } catch (error) {

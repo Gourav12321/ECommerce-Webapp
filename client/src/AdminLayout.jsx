@@ -7,7 +7,7 @@ function AdminLayout({ children }) {
       <div className='fixed w-full z-50'>
         <Navbar />
       </div>
-      <div className='h-screen w-full pt-[4rem] lg:px-[1rem] px-4 z-0'>
+      <div className='h-screen lg:h-[100%]  w-full pt-[4rem] lg:px-[1rem] px-4 z-0'>
         {children}
       </div>
     </div>

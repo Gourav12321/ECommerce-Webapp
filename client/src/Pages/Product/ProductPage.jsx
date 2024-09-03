@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ReactImageMagnify from 'react-image-magnify';
 import ReviewForm from './ReviewForm';
@@ -11,6 +11,10 @@ import 'swiper/css/autoplay';
 import 'swiper/css/pagination';
 import { Autoplay, Pagination } from 'swiper/modules';
 import { Rating } from '@mui/material';
+import AddToCartButton from './AddToCartButton';
+import WishlistButton from './WishlistButton';
+import VerticalCardProduct from './VerticalCardProduct';
+import { useSelector } from 'react-redux';
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -18,12 +22,13 @@ const ProductPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedImage, setSelectedImage] = useState('');
+  const user = useSelector((state) => state.user.user);
 
   const fetchProduct = async () => {
     try {
       const response = await axios.get(`/api/products/${id}`);
       setProduct(response.data.product);
-      setSelectedImage(response.data.product.images[0]); // Set default image
+      setSelectedImage(response.data.product.images[0]);
     } catch (err) {
       setError('Failed to load product.');
       toast.error('Failed to load product.');
@@ -39,13 +44,16 @@ const ProductPage = () => {
   if (loading) return <div className="text-center mt-10 text-xl font-semibold">Loading...</div>;
   if (error) return <div className="text-center mt-10 text-red-500 text-xl font-semibold">{error}</div>;
 
+ 
+  const discountPercentage = product.discountPercentage || 0; 
+  const discountedPrice = product.price - (product.price * discountPercentage) / 100;
+
   return (
     <div className="container mx-auto p-6 lg:pt-10 md:pt-20 pt-20 md:p-8">
-      <ToastContainer />
       <div className="flex flex-col md:flex-row">
-        {/* Image Gallery */}
+       
         <div className="w-full md:w-1/3 flex flex-col items-start">
-          <div className="w-full mb-4 relative ">
+          <div className="w-full mb-4 relative">
             <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg">
               <ReactImageMagnify
                 {...{
@@ -64,15 +72,15 @@ const ProductPage = () => {
                     width: '200%',
                     height: '100%',
                   },
-                  enlargedImagePosition: "beside",
+                  enlargedImagePosition: 'beside',
                   isHintEnabled: true,
-                  hintTextMouse: "Hover to Zoom",
+                  hintTextMouse: 'Hover to Zoom',
                   shouldUsePositiveSpaceLens: true,
-                  enlargedImagePortalId: "zoom-portal",
+                  enlargedImagePortalId: 'zoom-portal',
                   isEnlargedImagePortalEnabledForTouch: true,
                 }}
               />
-              <div id="zoom-portal" className='md:absolute top-0 lg:left-[25rem] md:left-[15rem] bg-gray-100 rounded-lg'></div>
+              <div id="zoom-portal" className="md:absolute top-0 lg:left-[25rem] md:left-[15rem] bg-gray-100 rounded-lg"></div>
             </div>
           </div>
           <div className="w-full flex gap-2">
@@ -86,32 +94,39 @@ const ProductPage = () => {
                   src={image}
                   alt={`Thumbnail ${index}`}
                   className="w-full h-24 object-contain transition-transform duration-300 transform hover:scale-105"
+                  onError={(e) => e.target.src = '/path/to/placeholder-image.jpg'} 
                 />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Product Details */}
+       
         <div className="w-full md:w-2/3 md:pl-8 mt-6 md:mt-0">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">{product.title}</h1>
           <p className="text-xl text-gray-600 mb-6">{product.description}</p>
-          <p className="text-2xl font-semibold text-gray-900 mb-4">${product.price}</p>
+
+          {discountPercentage > 0 ? (
+            <div className="mb-4">
+              <p className="text-2xl font-semibold text-green-500">
+                Rs.{discountedPrice.toFixed(2)}
+                <span className="line-through text-gray-500 ml-2">Rs.{product.price.toFixed(2)}</span>
+              </p>
+              <p className="text-lg font-medium text-green-500">Save {discountPercentage}%</p>
+            </div>
+          ) : (
+            <p className="text-2xl font-semibold text-gray-900 mb-4">Rs.{product.price}</p>
+          )}
+
           <p className="text-lg font-medium text-gray-700 mb-4">Brand: <span className="font-normal">{product.brand}</span></p>
           <p className="text-lg font-medium text-gray-700 mb-4">SKU: <span className="font-normal">{product.sku}</span></p>
           <p className="text-lg font-medium text-gray-700 mb-4">Stock: <span className="font-normal">{product.stock}</span></p>
           <div className="flex gap-4 mb-6">
-            <button
-              className="bg-blue-600 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300"
-              onClick={() => toast.success('Added to cart!')}
-            >
-              Add to Cart
+            <button className="bg-[#fb661bf3] text-white py-3 px-6 rounded-lg shadow-lg hover:bg-[#ff5623] transition duration-300">
+              <AddToCartButton product={product} />
             </button>
-            <button
-              className="bg-green-600 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-green-700 transition duration-300"
-              onClick={() => toast.info('Added to wishlist!')}
-            >
-              Add to Wishlist
+            <button className="bg-blue-500 font-semibold text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
+              <WishlistButton product={id} />
             </button>
           </div>
           <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-6">
@@ -132,57 +147,64 @@ const ProductPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Customer Reviews Section */}
-      <div className="mt-10 w-full lg:px-10 md:px-1 overflow-hidden ">
-        <h2 className="text-2xl font-semibold mb-4">Customer Reviews</h2>
-        {product.reviews.length > 0  ?
-        <Swiper
-          spaceBetween={20}
-          slidesPerView={1}
-          pagination={{ clickable: true }}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: true,
-          }}
-          modules={[Autoplay, Pagination]}
-          breakpoints={{
-            640: {
-              slidesPerView: 2,
-            },
-            768: {
-              slidesPerView: 3,
-            },
-          }}
-          className='h-[16rem] md:w-[100%]'
-        >
-          {product.reviews.map((review, index) => (
-            <SwiperSlide key={index} className="p-4 bg-white border py-10 rounded-lg shadow-md">
-              <div className="lg:flex md:block items-center mb-4 justify-between ">
-                <div>
-                  <p className="text-lg font-semibold">{review.reviewerName}</p>
-                  <p className="text-sm text-gray-500">{new Date(review.date).toLocaleDateString()}</p>
-                </div>
-                <div>
-                  <Rating
-                    name={`review-rating-${index}`}
-                    value={review.rating}
-                    readOnly
-                    precision={0.5}
-                    size="large" // Adjust size as needed
-                  />
-                </div>
-              </div>
-              <p className="text-gray-700">{review.comment}</p>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-        : <p className='text-xl font-bold'>No Review Yet</p>}
+      <div>
+        <p className="text-2xl font-semibold my-4">Recommended Products</p>
+        <VerticalCardProduct 
+          categoryName={Array.isArray(product.category) 
+            ? product.category.map((en) => en.name).join(', ') 
+            : product.category?.name || 'Unknown Category'} 
+          heading={Array.isArray(product.category) 
+            ? product.category.map((en) => en.name).join(', ') 
+            : product.category?.name || 'Unknown Category'}
+        />
       </div>
-
-      {/* Review Form */}
-      <ReviewForm productId={id} onReviewSubmitted={fetchProduct}/>
-      
+      {/* Customer Reviews Section */}
+      <div className="mt-10 w-full lg:px-10 md:px-1 overflow-hidden">
+        <h2 className="text-2xl font-semibold mb-4">Customer Reviews</h2>
+        {product.reviews.length > 0 ? (
+          <Swiper
+            spaceBetween={20}
+            slidesPerView={1}
+            pagination={{ clickable: true }}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: true,
+            }}
+            modules={[Autoplay, Pagination]}
+            breakpoints={{
+              640: {
+                slidesPerView: 2,
+              },
+              768: {
+                slidesPerView: 3,
+              },
+              1024: {
+                slidesPerView: 4,
+              },
+            }}
+            loop
+          >
+            {product.reviews.map((review, index) => (
+              <SwiperSlide key={index} className="p-2 rounded-lg bg-gray-100">
+                <div className="p-4 shadow-md">
+                  <Rating
+                    value={review.rating}
+                    precision={0.5}
+                    readOnly
+                    className="mb-2"
+                  />
+                  <p className="text-gray-700 mb-2">{review.comment}</p>
+                  <p className="text-sm text-gray-500"> {review.reviewerName}</p>
+                  <p className="text-sm text-gray-500"> {review.reviewerEmail}</p>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        ) : (
+          <p className="text-lg font-semibold text-gray-700">No reviews yet.</p>
+        )}
+        <ReviewForm productId={id} onReviewSubmitted={fetchProduct} />
+      </div>
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import OAuth from './OAuth';
 import styles from '../../style';
 import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 function Signup() {
   const navigate = useNavigate();
@@ -18,9 +19,15 @@ function Signup() {
 
   const [data, setData] = useState({});
   const [seen, setSeen] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState('');
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({ ...data, [name]: value });
+
+    if (name === 'password') {
+      evaluatePasswordStrength(value);
+    }
   };
 
   const togglePasswordVisibility = (e) => {
@@ -28,26 +35,47 @@ function Signup() {
     setSeen(!seen);
   };
 
+  const evaluatePasswordStrength = (password) => {
+    let strength = 'Weak';
+    if (password.length >= 8) {
+      const hasUpperCase = /[A-Z]/.test(password);
+      const hasLowerCase = /[a-z]/.test(password);
+      const hasNumbers = /\d/.test(password);
+      const hasSpecialChars = /[@$!%*?&#]/.test(password);
+
+      if (hasUpperCase && hasLowerCase && hasNumbers && hasSpecialChars) {
+        strength = 'Strong';
+      } else if (hasUpperCase || hasLowerCase || hasNumbers || hasSpecialChars) {
+        strength = 'Medium';
+      }
+    }
+    setPasswordStrength(strength);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (passwordStrength !== 'Strong') {
+      toast.error('Please choose a stronger password.');
+      return;
+    }
+
     if (!data.fullName || !data.email || !data.password) {
-      alert("All fields are required");
+      toast.error("All fields are required");
       return;
     }
     try {
+      toast.info('Please Verify Your Email');
       await axios.post('/api/user/verifyMail', data);
       
-      navigate('/verify-email'); // navigate to a desired route after signup
+      navigate('/verify-email');
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred while submitting the form");
+      toast.error("An error occurred while submitting the form");
     }
   };
 
   return (
-    <>
-      <div className='w-full min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
+    <div className='w-full min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
       <div className='sm:mx-auto sm:w-full sm:max-w-md'>
         <h1 className='mt-6 text-center text-3xl font-extrabold'>
           Register As A New User
@@ -56,13 +84,13 @@ function Signup() {
       <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
         <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
           <form className='space-y-6' onSubmit={handleSubmit}>
-          <div>
+            <div>
               <label htmlFor='fullName' className='block text-sm font-medium'>
                 Full Name
               </label>
               <div className='mt-1'>
                 <input
-                  type='fullName'
+                  type='text'
                   name='fullName'
                   required
                   value={data.fullName || ''}
@@ -110,8 +138,12 @@ function Signup() {
                   )}
                 </button>
               </div>
+              <div className='mt-2'>
+                <span className={`text-sm font-medium ${passwordStrength === 'Strong' ? 'text-green-500' : passwordStrength === 'Medium' ? 'text-yellow-500' : 'text-red-500'}`}>
+                  {passwordStrength} Password
+                </span>
+              </div>
             </div>
-            
             <div>
               <button
                 type="submit"
@@ -121,7 +153,7 @@ function Signup() {
               </button>
             </div>
             <div>
-              <OAuth/>
+              <OAuth />
             </div>
             <div className={`${styles.noramlFlex} w-full`}>
               <h4>Already have an account?</h4>
@@ -133,7 +165,6 @@ function Signup() {
         </div>
       </div>
     </div>
-    </>
   );
 }
 

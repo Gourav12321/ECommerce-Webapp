@@ -2,11 +2,15 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
-const session = require('express-session');
 const cors = require('cors');
 const UserAuthRoute = require('./routes/UserAuth.routes');
 const ProductRoute = require('./routes/Product.routes');
 const CategoryRoute = require('./routes/Category.routes');
+const OrderRoute = require('./routes/Cart.routes');
+const orderRoutes = require('./routes/Orders.route');
+const AdminDashboard = require('./routes/AdminDashboard.route');
+const wishlist = require('./routes/wishlist.routes');
+const path = require('path');
 dotenv.config();
 
 const app = express();
@@ -23,10 +27,14 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 
 
 
-// Routes
 app.use('/api/user', UserAuthRoute);
 app.use('/api', ProductRoute);
 app.use('/api', CategoryRoute);
+app.use('/api/cart', OrderRoute);
+app.use('/api/order', orderRoutes);
+app.use('/api', AdminDashboard);
+app.use('/api',wishlist);
+app.use('/receipts', express.static(path.join(__dirname, 'receipts')));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -26,11 +26,11 @@ const sendmailAndsaveData = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({ message: "User already registered" });
     }
-
+    const hashedPassword = await bcrypt.hash(password, 10); 
     const newUser = new User({
       fullName,
       email,
-      password,
+      password : hashedPassword ,
       verificationToken,
     });
 
@@ -143,7 +143,6 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-// Password Setup Function
 const setupPassword = async (req, res) => {
   const { email, password } = req.body;
 
@@ -173,10 +172,9 @@ const setupPassword = async (req, res) => {
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
-
+  
   try {
     const user = await User.findOne({ email });
-
     if (!user) {
       return res
         .status(401)
@@ -195,8 +193,8 @@ const signin = async (req, res) => {
         .status(401)
         .json({ success: false, message: "Invalid email or password" });
     }
-
     res.status(200).json({ success: true, user });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Failed to sign in" });
@@ -210,11 +208,9 @@ const userAddress = async (req, res) => {
     const existingAddress = await Address.findOne({ email });
 
     if (existingAddress) {
-      // Append the new address to the existing addresses
       existingAddress.addresses.push(address);
       await existingAddress.save();
     } else {
-      // Create a new address document with the initial address
       const newAddress = new Address({ email, addresses: [address] });
       await newAddress.save();
     }
@@ -230,7 +226,6 @@ const userAddress = async (req, res) => {
 
 const getUserWithAddresses = async (req, res) => {
   try {
-    // Fetch user and populate the addresses
     const user = await User.findOne({ email: req.session.userEmail }).populate(
       "addresses"
     );
@@ -274,12 +269,33 @@ const getAddress = async (req, res) => {
   }
 };
 
-const editUser = async (req, res) => {
-  const { fullName, currentPassword, newPassword, profile } = req.body;
-  const email = req.body.email; // Get the email from req.body
+const getAddressByEmail = async (req, res) => {
+  const { email } = req.params;
 
   try {
-    const user = await User.findOne({ email }); // Find the user by email
+    const addressDocs = await Address.find({ email }).populate('addresses');
+
+    if (addressDocs.length === 0) {
+      return res.status(404).json({ success: false, message: "Address not found" });
+    }
+
+    const addresses = addressDocs.map(doc => doc.addresses).flat();
+
+
+    res.status(200).json({ success: true, addresses });
+  } catch (error) {
+    console.error("Error in getAddress:", error);
+    res.status(500).json({ success: false, message: "Failed to retrieve address" });
+  }
+};
+
+
+const editUser = async (req, res) => {
+  const { fullName, currentPassword, newPassword, profile } = req.body;
+  const email = req.body.email;
+
+  try {
+    const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: "User not found." });
 
     if (currentPassword || newPassword) {
@@ -311,7 +327,6 @@ const editUser = async (req, res) => {
   }
 };
 
-// Get all users
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -321,7 +336,6 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// Update user by ID
 const updateUser = async (req, res) => {
   const { email, fullName, role } = req.body;
 
@@ -331,9 +345,9 @@ const updateUser = async (req, res) => {
 
   try {
     const updatedUser = await User.findOneAndUpdate(
-      { email }, // Find the user by email
-      { fullName, role }, // Update the fullName and role
-      { new: true } // Return the updated document
+      { email },
+      { fullName, role }, 
+      { new: true } 
     );
 
     if (!updatedUser) {
@@ -345,7 +359,6 @@ const updateUser = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// Delete a user by ID
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -357,7 +370,7 @@ const deleteUser = async (req, res) => {
 };
 const getAllAddresses = async (req, res) => {
   try {
-    const { email } = req.query; // Ensure email is sent as a query parameter
+    const { email } = req.query;
 
     const address = await Address.findOne({ email });
 
@@ -377,12 +390,10 @@ const updateAddress = async (req, res) => {
   try {
     const { email, address } = req.body;
 
-    // Validate request data
     if (!email || !address || !address._id) {
       return res.status(400).json({ success: false, message: 'Invalid request data' });
     }
 
-    // Find and update the specific address within the addresses array
     const updatedAddress = await Address.findOneAndUpdate(
       { email: email, "addresses._id": address._id },
       { $set: { "addresses.$": address } },
@@ -402,15 +413,13 @@ const updateAddress = async (req, res) => {
 
 
 
-// Delete Address
 const deleteAddress = async (req, res) => {
   try {
-    const { email } = req.query; // Email passed as a query parameter
-    const { addressId } = req.params; // Address ID passed as a URL parameter
-    // Verify address existence and remove it from the addresses collection
+    const { email } = req.query; 
+    const { addressId } = req.params;
     const result = await Address.updateOne(
-      { email: email, 'addresses._id': addressId }, // Find the address by email and addressId
-      { $pull: { addresses: { _id: addressId } } } // Pull the address from the array
+      { email: email, 'addresses._id': addressId }, 
+      { $pull: { addresses: { _id: addressId } } } 
     );
 
     if (result.modifiedCount > 0) {
@@ -441,5 +450,6 @@ module.exports = {
   getAddress,
   getAllAddresses,
   deleteAddress,
-  updateAddress
+  updateAddress,
+  getAddressByEmail
 };

@@ -26,8 +26,7 @@ const ReviewForm = ({ productId, onReviewSubmitted }) => {
       const response = await axios.post(`/api/products/${productId}/reviews`, payload);
       if (response.data.success) {
         toast.success('Review submitted successfully!');
-        onReviewSubmitted(); // Refresh product reviews after submission
-        // Reset form fields
+        onReviewSubmitted();
         setRating(0);
         setComment('');
         setReviewerName('');
@@ -49,8 +48,8 @@ const ReviewForm = ({ productId, onReviewSubmitted }) => {
             name="product-rating"
             value={rating}
             onChange={handleRatingChange}
-            size="large" // Adjust size as needed
-            precision={0.5} // Allows for half-star ratings
+            size="large" 
+            precision={0.5}
           />
         </div>
       </div>

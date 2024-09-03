@@ -2,10 +2,8 @@ const { default: mongoose } = require("mongoose");
 const { Category } = require("../model/Category.model");
 const Product = require("../model/Product.model");
 
-// Create a new product
 const createProduct = async (req, res) => {
   try {
-    // Extract product data from the request
     const {
       title,
       description,
@@ -15,7 +13,7 @@ const createProduct = async (req, res) => {
       discountPercentage,
       rating,
       stock,
-      tags, // Tags should be an array
+      tags, 
       brand,
       sku,
       weight,
@@ -29,10 +27,8 @@ const createProduct = async (req, res) => {
       images
     } = req.body;
 
-    // Process tags (assuming they come in as a string)
     const processedTags = Array.isArray(tags) ? tags : tags.split(',').map(tag => tag.trim()).filter(tag => tag);
 
-    // Create a new product document
     const newProduct = new Product({
       title,
       description,
@@ -42,7 +38,7 @@ const createProduct = async (req, res) => {
       discountPercentage,
       rating,
       stock,
-      tags: processedTags, // Save as array
+      tags: processedTags,
       brand,
       sku,
       weight,
@@ -56,7 +52,6 @@ const createProduct = async (req, res) => {
       images
     });
 
-    // Save the product to the database
     await newProduct.save();
     res.status(201).json({ message: 'Product created successfully', product: newProduct });
   } catch (error) {
@@ -65,7 +60,7 @@ const createProduct = async (req, res) => {
   }
 };
 
-// Get all products
+
 const getProducts = async (req, res) => {
   try {
     const products = await Product.find()
@@ -84,16 +79,14 @@ const getProducts = async (req, res) => {
 };
 
 const getProductbyCategory = async (req, res) => {
-  const { categoryName } = req.params; // Extract category name from query parameters
+  const { categoryName } = req.params;
 
   try {
-    // Find the category by name
     const category = await Category.findOne({ name: categoryName });
     if (!category) {
       return res.status(404).json({ success: false, message: 'Category not found' });
     }
 
-    // Fetch products associated with the found category
     const products = await Product.find({ category: category._id })
       .populate({
         path: 'category',
@@ -144,7 +137,6 @@ const getProductsByCategory = async (req, res) => {
 
 
 
-// Get a single product by ID
 const getProductById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -166,7 +158,6 @@ const getProductById = async (req, res) => {
   }
 };
 
-// Update a product by ID
 const updateProduct = async (req, res) => {
   const { id } = req.params;
   try {
@@ -188,7 +179,6 @@ const updateProduct = async (req, res) => {
   }
 };
 
-// Delete a product by ID
 const deleteProduct = async (req, res) => {
   const { id } = req.params;
   try {
@@ -202,7 +192,6 @@ const deleteProduct = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to delete product', error: error.message });
   }
 };
-// Search products by various fields
 const searchProducts = async (req, res) => {
   try {
     const { query } = req.query;
@@ -224,7 +213,7 @@ const searchProducts = async (req, res) => {
   }
 };
 const addReview = async (req, res) => {
-  const { id } = req.params;  // Product ID
+  const { id } = req.params; 
   const { rating, comment, reviewerName, reviewerEmail } = req.body;
   try {
     const product = await Product.findById(id);
@@ -232,7 +221,6 @@ const addReview = async (req, res) => {
       return res.status(404).json({ message: 'Product not found' });
     }
 
-    // Add the new review to the reviews array
     const newReview = {
       rating,
       comment,
@@ -250,6 +238,8 @@ const addReview = async (req, res) => {
     res.status(500).json({ message: 'Failed to add review', error });
   }
 };
+
+
 
 module.exports = {
   addReview,

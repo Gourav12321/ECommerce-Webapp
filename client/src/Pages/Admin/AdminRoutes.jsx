@@ -1,12 +1,12 @@
 import React from 'react';
 import { Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux'; // Assumes you're using Redux for state management
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useSelector } from 'react-redux'; 
+import {  toast } from 'react-toastify';
 
-// Check if the user is an admin
+
 const AdminRoute = ({ children }) => {
-    const user = useSelector((state) => state.user.user); // Adjust based on your Redux setup
+    const user = useSelector((state) => state.user.user);
+  
 
     if (user && user.role === 'Admin') {
         return children;
@@ -14,7 +14,8 @@ const AdminRoute = ({ children }) => {
         toast.error('You cannot access this page. Only admin can.');
         return <Navigate to="/" />;
     }
-    <ToastContainer/>
+    
+   
 };
 
 export default AdminRoute;

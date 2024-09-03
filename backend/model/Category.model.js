@@ -1,8 +1,6 @@
-// Category Model (Category.model.js)
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-// SubCategory Schema
 const subCategorySchema = new Schema({
   name: {
     type: String,
@@ -10,7 +8,6 @@ const subCategorySchema = new Schema({
   }
 });
 
-// Category Schema
 const categorySchema = new Schema({
   name: {
     type: String,
@@ -20,6 +17,10 @@ const categorySchema = new Schema({
   photo: {
     type: String,
     default: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQmiqR_gB1aE6SmGpJvgdi6j6MZYtLpcSittA&s'
+  },
+  bannerPhoto:{
+    type: String,
+    default: 'https://rukminim2.flixcart.com/fk-p-flap/1600/270/image/614c92ccb25152fe.jpg?q=20'
   },
   subcategories: [{
     type: Schema.Types.ObjectId,

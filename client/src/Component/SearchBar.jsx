@@ -55,7 +55,6 @@ function SearchBar() {
   }, []);
 
   useEffect(() => {
-    // Close search results when the route changes
     setIcon(false);
     setSearch('');
   }, [location]);

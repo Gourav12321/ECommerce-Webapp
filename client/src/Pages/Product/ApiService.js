@@ -1,8 +1,6 @@
-// src/services/apiService.js
 import axios from 'axios';
 
-const API_URL = '/api'; // Replace with your backend URL
-
+const API_URL = '/api'; 
 export const fetchCategories = async () => {
   try {
     const response = await axios.get(`${API_URL}/categories`);
@@ -24,7 +22,7 @@ export const fetchProductsByCategory = async (categoryName) => {
 };
 
 export const fetchAllProducts = async () => {
-  const response = await fetch('/api/products'); // Adjust the endpoint as necessary
+  const response = await fetch('/api/products');
   if (!response.ok) {
     throw new Error('Failed to fetch products');
   }

@@ -1,4 +1,3 @@
-// src/components/SortingOptions.js
 
 import React from "react";
 

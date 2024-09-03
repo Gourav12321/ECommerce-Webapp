@@ -131,4 +131,125 @@
   }
   
 
+  .swiper1 {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+  }
   
+  .swiper-slide1 {
+    
+    background: #fff;
+  
+    /* Center slide text vertically
+    display: flex;
+    justify-content: center;
+    align-items: center; */
+  }
+  
+
+  
+  .autoplay-progress {
+    position: absolute;
+    right: 5%;
+    bottom: 8%;
+    z-index: 10;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: var(--swiper-theme-color);
+  }
+  
+  .autoplay-progress svg {
+    --progress: 0;
+    position: absolute;
+    left: 0;
+    top: 0px;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    stroke-width: 4px;
+    stroke: var(--swiper-theme-color);
+    fill: none;
+    stroke-dashoffset: calc(125.6px * (1 - var(--progress)));
+    stroke-dasharray: 125.6;
+    transform: rotate(-90deg);
+  }
+  
+
+
+  /* tailwind.css */
+.order-page, .payment-page, .order-history {
+  padding: 2rem;
+  max-width: 800px;
+}
+
+.address-item {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.address-item.selected {
+  border-color: #007bff;
+}
+
+.order-summary, .order-item {
+  margin-bottom: 1rem;
+}
+
+.checkout-button, .payment-button {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.checkout-button:hover, .payment-button:hover {
+  background-color: #0056b3;
+}
+
+.order-history {
+  margin-top: 2rem;
+}
+
+.order-product {
+  border-top: 1px solid #ccc;
+  padding-top: 0.5rem;
+}
+
+
+.dashboard {
+  padding: 20px;
+}
+
+.dashboard-stats {
+  display: flex;
+  justify-content: space-around;
+}
+
+.stat {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  width: 22%;
+  text-align: center;
+}
+
+.dashboard-charts {
+  margin-top: 20px;
+}
+
+.chart {
+  margin-bottom: 20px;
+}

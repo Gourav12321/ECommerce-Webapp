@@ -1,10 +1,9 @@
-// Category Controller (Category.controller.js)
 const { Category, SubCategory } = require('../model/Category.model');
 
-// Create a new category
 const createCategory = async (req, res) => {
   try {
-    const newCategory = new Category(req.body);
+    const { name, photo } = req.body;
+    const newCategory = new Category({ name, photo});
     await newCategory.save();
     res.status(201).json({ success: true, category: newCategory });
   } catch (error) {
@@ -13,7 +12,7 @@ const createCategory = async (req, res) => {
   }
 };
 
-// Get all categories
+
 const getCategories = async (req, res) => {
   try {
     const categories = await Category.find().populate('subcategories');
@@ -25,7 +24,6 @@ const getCategories = async (req, res) => {
 };
 
 
-// Update a category by ID
 const updateCategory = async (req, res) => {
   const { id } = req.params;
   try {
@@ -40,7 +38,6 @@ const updateCategory = async (req, res) => {
   }
 };
 
-// Delete a category by ID
 const deleteCategory = async (req, res) => {
   const { id } = req.params;
   try {
@@ -55,14 +52,12 @@ const deleteCategory = async (req, res) => {
   }
 };
 
-// Subcategory Controller (SubCategory.controller.js)
 
 const createSubCategory = async (req, res) => {
   try {
     const newSubCategory = new SubCategory(req.body);
     await newSubCategory.save();
 
-    // Find the category and add the new subcategory
     const category = await Category.findById(req.body.categoryId);
     if (category) {
       category.subcategories.push(newSubCategory._id);
@@ -77,7 +72,6 @@ const createSubCategory = async (req, res) => {
 };
 
 
-// Get all subcategories
 const getSubCategories = async (req, res) => {
   try {
     const subcategories = await SubCategory.find();
@@ -88,7 +82,6 @@ const getSubCategories = async (req, res) => {
   }
 };
 
-// Update a subcategory by ID
 const updateSubCategory = async (req, res) => {
   const { id } = req.params;
   try {
@@ -103,7 +96,6 @@ const updateSubCategory = async (req, res) => {
   }
 };
 
-// Delete a subcategory by ID
 const deleteSubCategory = async (req, res) => {
   const { id } = req.params;
   try {

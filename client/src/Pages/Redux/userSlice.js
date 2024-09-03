@@ -12,9 +12,11 @@ const userSlice = createSlice({
     },
     logout: (state) => {
       state.user = null;
+      state.cart = []; // Clear cart on logout
     },
+    
   },
 });
 
-export const { setUser, logout } = userSlice.actions;
+export const { setUser, logout} = userSlice.actions;
 export default userSlice.reducer;

@@ -1,4 +1,3 @@
-// src/components/CategoryFilter.js
 
 import React from "react";
 
@@ -8,7 +7,7 @@ const CategoryFilter = ({ categories, selectedCategories, handleCategoryChange }
     return <div>Error: Invalid categories data</div>;
   }
   return (
-    <div className="mb-4 ">
+    <div className="mb-4 lg:pt-5 md:pt-10 pt-32">
       <h2 className="text-lg  font-semibold mb-2">Filter by Category</h2>
       <ul>
       {categories.map((category) => (

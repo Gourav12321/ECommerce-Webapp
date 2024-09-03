@@ -1,36 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { IoSearch } from "react-icons/io5";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { HiOutlineDotsVertical, HiMenu } from "react-icons/hi";
 import { RxCross2 } from "react-icons/rx";
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../Pages/Redux/userSlice';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
+
 import SearchBar from './SearchBar';
 
 function Navbar() {
   const [icon, setIcon] = useState(false);
   const inputRef = useRef(null);
 
-    const [cart, setCart] = useState(0);
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
     const [sidebarOpen1, setSidebarOpen1] = useState(false);
     const sidebarRef = useRef(null);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
     const user = useSelector((state) => state.user.user);
+    const cart = useSelector((state) => state.cart.items);
     const dispatch = useDispatch();
+    const [cartCount, setCartCount] = useState(0);
 
-    const handleCart = () => {
-        setCart(cart + 1);
-    };
-
-  
-
-
-  
+    useEffect(() => {
+        // Calculate total quantity of items in the cart
+        const totalQuantity = cart.reduce((total, item) => total + item.quantity, 0);
+        setCartCount(totalQuantity);
+    }, [cart]);
 
     const handleClickOutside = (event) => {
         if (inputRef.current && !inputRef.current.contains(event.target)) {
@@ -50,8 +47,11 @@ function Navbar() {
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
+           
         };
-    }, [icon, dropdownOpen]);
+      
+        
+    }, [icon, dropdownOpen, cart ]);
 
     const handleLogout = () => {
         toast.success('You are Logged Out from This device');
@@ -93,15 +93,16 @@ function Navbar() {
                     {user ? (
                         <div className='relative'>
                             <button onClick={toggleDropdown}>
-                                <img src={user.profile} alt="profile" className='w-8 h-8 rounded-full hidden lg:inline' />
+                                <img src={user.profile} alt="profile" className='w-8 h-8 rounded-full mt-2' />
                             </button>
                             {dropdownOpen && (
                                 <div ref={dropdownRef} className='absolute right-0 mt-2 bg-white border border-gray-200 shadow-lg rounded-lg w-48'>
-                                    <Link to='/profile' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Profile</Link>
-                                    <Link to='/orders' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Orders</Link>
-                                    {user && <Link to='/admin' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Admin Panel</Link>}
-                                    <Link to='/address' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Your Address</Link>
-                                    <button onClick={handleLogout} className='block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100'>Logout</button>
+                                    <Link to='/profile' className='block px-4 py-2 text-gray-800 hover:bg-gray-100 font-bold'>Profile</Link>
+                                    <Link to='/orders-history' className='block px-4 py-2 text-gray-800 hover:bg-gray-100 font-bold'>Orders History</Link>
+                                    <Link to='/wishlist' className='block px-4 py-2 text-gray-800 hover:bg-gray-100 font-bold'>Wishlist</Link>
+                                    {user && <Link to='/admin/dashboard' className='block px-4 py-2 text-gray-800 hover:bg-gray-100 font-bold'>Admin Panel</Link>}
+                                    <Link to='/address' className='block px-4 py-2 text-gray-800 hover:bg-gray-100 font-bold'>Address</Link>
+                                    <button onClick={handleLogout} className='block w-full text-left px-4 py-2 text-red-800 font-bold hover:bg-gray-100'>Logout</button>
                                 </div>
                             )}
                         </div>
@@ -109,10 +110,10 @@ function Navbar() {
                         <Link to='/sign-in' className='mr-4 text-gray-800 hover:text-gray-900'>Sign-in</Link>
                     )}
                     {user && 
-                    <div className='relative'>
-                        <span className='absolute bg-red-500 text-white rounded-lg -bottom-2 w-5 h-5 text-center text-[13px] -right-2 font-extrabold'>{cart}</span>
-                        <MdOutlineShoppingCart className='text-2xl text-gray-800' onClick={handleCart} />
-                    </div>
+                    <Link to='/cart' className='relative'>
+                        <span className='absolute bg-red-500 text-white rounded-lg -bottom-2 w-5 h-5 text-center text-[13px] -right-2 font-extrabold'>{cartCount}</span>
+                        <MdOutlineShoppingCart className='text-2xl text-gray-800'  />
+                    </Link>
                     }
                     <div
                         className='relative'
@@ -123,18 +124,58 @@ function Navbar() {
                             className='text-2xl text-gray-800'
                         />
                         {sidebarOpen1 && (
-                            <div className='absolute right-0 mt-2 bg-white border border-gray-200 shadow-lg rounded-lg w-48'>
-                                <Link to='/category/1' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Category 1</Link>
-                                <Link to='/category/2' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Category 2</Link>
-                                <Link to='/category/3' className='block px-4 py-2 text-gray-800 hover:bg-gray-100'>Category 3</Link>
-                            </div>
+                           <div className=" absolute right-0 mt-5 bg-white border border-gray-200 shadow-lg rounded-lg ">
+                           <div className="flex justify-center mt-5">
+                             <img
+                               src="https://firebasestorage.googleapis.com/v0/b/e-com-ff1ce.appspot.com/o/mauryagourav82%40gmail.com%2Fgourav-removebg-preview.png?alt=media&token=97a2dad1-b099-4cf0-93d4-185d9332886a"
+                               alt="Creator Photo"
+                               className="w-20 h-20 rounded-full border-2 border-blue-400 shadow-md"
+                             />
+                           </div>
+                           <div className="text-center mt-4">
+                             <h1 className="text-xl font-bold text-gray-800">Gourav Maurya</h1>
+                             <p className="text-gray-600 mt-2 px-4">
+                               I am a passionate MERN stack developer with expertise in building dynamic
+                               and responsive web applications. Skilled in MongoDB, Express.js, React, and
+                               Node.js, I create seamless user experiences and efficient backend solutions.
+                             </p>
+                           </div>
+                           <div className="mt-5 px-6">
+                             <div className="flex justify-between items-center">
+                               <span className="text-gray-600 font-semibold">Contact Info:</span>
+                               <span className="text-gray-800">+91 9354291197</span>
+                             </div>
+                             <div className="flex justify-between items-center mt-2">
+                               <span className="text-gray-600 font-semibold">Email:</span>
+                               <a
+                                 href="mailto:mauryagourav82@gmail.com"
+                                 className="text-blue-500 hover:underline"
+                               >
+                                 mauryagourav82@gmail.com
+                               </a>
+                             </div>
+                             <div className="flex justify-center mt-4">
+                               <a
+                                 href="https://advance-portfolio-web-app.onrender.com/"
+                                 target='blank'
+                                 className="text-white bg-blue-500 hover:bg-blue-600 py-2 px-4 rounded-full transition duration-300"
+                               >
+                                 View My Portfolio
+                               </a>
+                             </div>
+                           </div>
+                           <div className="bg-blue-100 text-center py-4 mt-6">
+                             <p className="text-blue-700 text-sm">Let's create something amazing together!</p>
+                           </div>
+                         </div>
+                         
                         )}
                     </div>
                     
                 </div>
             </div>
             <div className='w-full pb-4 pt-2 lg:hidden flex gap-3 bg-gray-100'>
-            <div className='relative lg:hidden px-4 flex items-center'>
+            {/* <div className='relative lg:hidden px-4 flex items-center'>
             <HiMenu
                 onClick={toggleSidebar}
                 className='text-3xl text-gray-800'
@@ -148,21 +189,22 @@ function Navbar() {
                         </div>
                         <ul className='p-4'>
                             <li><Link to='/profile' className='block py-2 text-gray-800 hover:bg-gray-100'>Profile</Link></li>
-                            <li><Link to='/orders' className='block py-2 text-gray-800 hover:bg-gray-100'>Orders</Link></li>
-                            {user && <li><Link to='/admin' className='block py-2 text-gray-800 hover:bg-gray-100'>Admin Panel</Link></li>}
-                            <li><Link to='/address' className='block py-2 text-gray-800 hover:bg-gray-100'>Your Address</Link></li>
+                            <li><Link to='/orders-history' className='block py-2 text-gray-800 hover:bg-gray-100'>Orders History</Link></li>
+                            <li><Link to='/wishlist' className='block py-2 text-gray-800 hover:bg-gray-100'>Wishlist</Link></li>
+                            {user && <li><Link to='/admin/dashboard' className='block py-2 text-gray-800 hover:bg-gray-100'>Admin Panel</Link></li>}
+                            <li><Link to='/address' className='block py-2 text-gray-800 hover:bg-gray-100'>Address</Link></li>
                             <li><Link to='/sign-in' className='block py-2 text-gray-800 hover:bg-gray-100' onClick={handleLogout}>Logout</Link></li>
                         </ul>
                     </div>
 
                 </div>
             )}
-        </div>
-        <div className='lg:hidden block relative items-center w-[75%]'>
+        </div> */}
+        <div className='lg:hidden block relative items-center w-full px-5'>
             <SearchBar/>
         </div>
         </div>
-            <ToastContainer />
+        
         </div>
     );
 }

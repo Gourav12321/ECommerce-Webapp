@@ -5,7 +5,7 @@ import { Country, State, City } from "country-state-city";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import AddressDisplay from "./AddressDisplay";
-import { toast } from 'react-toastify'; // Import toast
+import { toast } from 'react-toastify';
 
 const AddressForm = () => {
   const user = useSelector((state) => state.user.user);
@@ -31,25 +31,31 @@ const AddressForm = () => {
   const [isEditing, setIsEditing] = useState(false);
 
   const userEmail = user?.email;
+  const fetchAddresses = async () => {
+    try {
+      const response = await axios.get("/api/user/getAllAddresses", {
+        params: { email: userEmail },
+      });
+      if (response.data.success) {
+        const fetchedAddresses = response.data.addresses || [];
+        setAddresses(fetchedAddresses);
 
+        if (fetchedAddresses.length > 0) {
+          setSelectedAddress(fetchedAddresses[0]);
+          setAddress(fetchedAddresses[0]);
+        }
+      } else {
+        console.error("Error fetching addresses:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching addresses:", error);
+    }
+  };
   useEffect(() => {
     if (!user) {
       navigate("/sign-in");
     } else if (userEmail) {
-      const fetchAddresses = async () => {
-        try {
-          const response = await axios.get("/api/user/getAllAddresses", {
-            params: { email: userEmail },
-          });
-          if (response.data.success) {
-            setAddresses(response.data.addresses || []);
-          } else {
-            console.error("Error fetching addresses:", response.data.message);
-          }
-        } catch (error) {
-          console.error("Error fetching addresses:", error);
-        }
-      };
+      
 
       fetchAddresses();
     }
@@ -131,38 +137,31 @@ const AddressForm = () => {
               addr._id === selectedAddress._id ? response.data.address : addr
             )
           );
-          setSelectedAddress(null);
+          setSelectedAddress(response.data.address);
           setIsEditing(false);
           toast.success('Address updated successfully!');
+          fetchAddresses
         } else {
           toast.error('Failed to update address');
         }
       } else {
         const response = await axios.post("/api/user/userAddress", {
           email: userEmail,
-          address : address,
+          address: address,
         });
         if (response.data.success) {
           setAddresses([...addresses, response.data.address]);
-         
+          setSelectedAddress(response.data.address);
+          
+          fetchAddresses()
         }
         toast.success('Address added successfully!');
       }
-      setAddress({
-        phoneNumber: "",
-        houseNo: "",
-        street: "",
-        landmark: "",
-        district: "",
-        country: "",
-        state: "",
-        city: "",
-        pincode: "",
-      });
-      setShowForm(false); // Hide the form after submission
+      
+      setShowForm(false);
     } catch (error) {
       console.error("Error submitting address:", error);
-      toast.error('An error occurred while submitting the address' , error.message);
+      toast.error('An error occurred while submitting the address');
     }
   };
 
@@ -170,7 +169,7 @@ const AddressForm = () => {
     setAddress(address);
     setSelectedAddress(address);
     setIsEditing(true);
-    setShowForm(true); // Show form when editing
+    setShowForm(true);
   };
 
   const handleDelete = async () => {
@@ -206,14 +205,24 @@ const AddressForm = () => {
       city: "",
       pincode: "",
     });
-    setShowForm(false); // Hide the form when editing is canceled
+    setShowForm(false);
   };
 
   const handleAddNewAddress = () => {
+    setAddress({
+      phoneNumber: "",
+      houseNo: "",
+      street: "",
+      landmark: "",
+      district: "",
+      country: "",
+      state: "",
+      city: "",
+      pincode: "",
+    });
     setSelectedAddress(null);
-    setShowForm(true); // Show form for adding a new address
+    setShowForm(true);
   };
-
   const onSave = async (editedAddress) => {
     try {
       const response = await axios.put("/api/user/updateAddress", {
@@ -228,7 +237,7 @@ const AddressForm = () => {
         );
         setIsEditing(false);
         setSelectedAddress(null);
-        setShowForm(false); // Hide form after saving
+        setShowForm(false);
         toast.success('Address updated successfully!');
       } else {
         toast.error('Failed to update address');
@@ -238,7 +247,6 @@ const AddressForm = () => {
       toast.error('An error occurred while saving the address');
     }
   };
-
   return (
     <div className="flex flex-col md:flex-row">
       <div className="md:w-1/4 border-r p-4">
@@ -253,10 +261,11 @@ const AddressForm = () => {
           {addresses.map((addr) => (
             <li
               key={addr._id}
-              className="cursor-pointer p-2 border-b hover:bg-gray-200 rounded-md"
+              className={`cursor-pointer p-2 border-b hover:bg-gray-200 rounded-md ${selectedAddress?._id === addr._id ? 'bg-gray-200' : ''}`}
               onClick={() => {
                 setSelectedAddress(addr);
-                setShowForm(false); // Hide form when selecting an existing address
+                setAddress(addr);
+                setShowForm(false);
               }}
             >
               {addr.street}, {addr.city}
@@ -264,7 +273,8 @@ const AddressForm = () => {
           ))}
         </ul>
       </div>
-      <div className="md:w-3/4 p-4">
+      <div className="md:w-3/4 p-4 h-full">
+        <div className='w-full h-screen -z-10 absolute left-0 right-0 bg-gray-100 '></div>
         <h2 className="text-xl font-bold mb-4">
           {selectedAddress 
             ? (isEditing ? "Edit Address" : "")
@@ -331,8 +341,12 @@ const AddressForm = () => {
                   label: country.name,
                 }))}
                 onChange={handleCountryChange}
-                value={address.country ? { label: address.country, value: address.country } : null}
-                className="w-full"
+                value={address.country && {
+                  value: countries.find(
+                    (country) => country.name === address.country
+                  ).isoCode,
+                  label: address.country,
+                }}
               />
             </div>
             <div>
@@ -343,20 +357,25 @@ const AddressForm = () => {
                   label: state.name,
                 }))}
                 onChange={handleStateChange}
-                value={address.state ? { label: address.state, value: address.state } : null}
-                className="w-full"
+                value={address.state && {
+                  value: states.find((state) => state.name === address.state)
+                    .isoCode,
+                  label: address.state,
+                }}
               />
             </div>
             <div>
               <label className="block mb-2">City</label>
               <Select
                 options={cities.map((city) => ({
-                  value: city.name,
                   label: city.name,
+                  value: city.id,
                 }))}
                 onChange={handleCityChange}
-                value={address.city ? { label: address.city, value: address.city } : null}
-                className="w-full"
+                value={address.city && {
+                  label: address.city,
+                  value: cities.find((city) => city.name === address.city).id,
+                }}
               />
             </div>
             <div>
@@ -369,20 +388,29 @@ const AddressForm = () => {
                 className="border p-2 rounded-md w-full"
               />
             </div>
-            <div className="flex justify-between">
+            <div className="flex gap-4">
+              <button
+                type="submit"
+                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 w-full"
+              >
+                {isEditing ? "Update Address" : "Add Address"}
+              </button>
               <button
                 type="button"
                 onClick={handleCancelEdit}
-                className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
+                className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 w-full"
               >
                 Cancel
               </button>
-              <button
-                type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-              >
-                {isEditing ? "Save" : "Add"}
-              </button>
+              {/* {isEditing && (
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 w-full"
+                >
+                  Delete Address
+                </button>
+              )} */}
             </div>
           </form>
         ) : (

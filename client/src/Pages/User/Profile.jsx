@@ -6,8 +6,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
 import { storage } from '../../Firebase';
 import { FaCamera, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { setUser } from '../Redux/userSlice';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 
 function Profile() {
   const user = useSelector((state) => state.user.user);
@@ -30,9 +29,11 @@ function Profile() {
   });
   const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0); 
   const [passwordError, setPasswordError] = useState({ current: '', new: '' });
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -48,6 +49,9 @@ function Profile() {
 
   const handleInputChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.name === 'newPassword') {
+      setPasswordStrength(e.target.value);
+    }
   };
 
   const handleFileChange = (e) => {
@@ -65,17 +69,20 @@ function Profile() {
     uploadTask.on(
       'state_changed',
       (snapshot) => {
-        // Optional: Handle progress
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setUploadProgress(progress);
       },
       (error) => {
         setError('Failed to upload image');
         toast.error('Failed to upload image');
         setUploading(false);
+        setUploadProgress(0);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           setFormData({ ...formData, profile: downloadURL });
           setUploading(false);
+          setUploadProgress(0);
           toast.success('Photo uploaded successfully. Hit the update button to save changes.');
         });
       }
@@ -116,12 +123,38 @@ function Profile() {
     }
   };
 
+  const checkPasswordStrength = (password) => {
+    let strength = 'Weak';
+    if (password.length >= 8) {
+      if (/[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password)) {
+        strength = 'Strong';
+      } else {
+        strength = 'Medium';
+      }
+    }
+    return strength;
+  };
+
+  const passwordStrengthClass = (strength) => {
+    switch (strength) {
+      case 'Strong':
+        return 'bg-green-500';
+      case 'Medium':
+        return 'bg-yellow-500';
+      default:
+        return 'bg-red-500';
+    }
+  };
+
   if (!user) {
-    return null; // or a loading spinner or placeholder
+    return null;
   }
 
   return (
-    <section className='profile p-14 md:p-10 lg:p-16'>
+    <>
+      <div className='w-full h-screen -z-10 absolute left-0 right-0 bg-gray-100'></div>
+    <section className='profile p-10 md:p-10 lg:p-16'>
+      
       <div className='flex flex-col items-center justify-center'>
         <div className='relative' onClick={handleProfileClick}>
           <img
@@ -138,6 +171,11 @@ function Profile() {
           onChange={handleFileChange}
           className='hidden'
         />
+        {uploading && (
+          <div className='text-center mt-4'>
+            <p>Uploading: {Math.round(uploadProgress)}%</p>
+          </div>
+        )}
         <div>
           <h2 className='text-lg font-bold sm:text-xl lg:text-2xl'>{formData.fullName}</h2>
         </div>
@@ -202,6 +240,18 @@ function Profile() {
                 />
               )}
             </div>
+            <div className='my-2'>
+              {formData.newPassword && (
+                <div className='relative'>
+                  <div
+                    className={`h-2 w-full rounded ${passwordStrengthClass(checkPasswordStrength(formData.newPassword))}`}
+                  />
+                  <p className='text-center text-sm mt-1'>
+                    {checkPasswordStrength(formData.newPassword)}
+                  </p>
+                </div>
+              )}
+            </div>
             <button
               type='submit'
               className='bg-blue-500 py-2 rounded-lg text-white focus:text-black font-bold'
@@ -211,20 +261,9 @@ function Profile() {
             </button>
           </form>
         </div>
-        <ToastContainer
-          position='top-right'
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme='colored'
-        />
       </div>
     </section>
+    </>
   );
 }
 

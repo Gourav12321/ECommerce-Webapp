@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom'; // Import useLocation
+import { useLocation } from 'react-router-dom'; 
 import CategoryFilter from './CategoryFilter';
 import SortingOptions from './SortingOptions';
 import ProductList from './ProductList';
@@ -13,8 +13,8 @@ function ProductCategory() {
   const [sortOption, setSortOption] = useState('');
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  const location = useLocation(); // Hook to get the current location
-  const searchParams = new URLSearchParams(location.search); // Create a URLSearchParams object from the query string
+  const location = useLocation(); 
+  const searchParams = new URLSearchParams(location.search); 
   const categoryQuery = searchParams.get('category'); // Get the 'category' parameter from the query string
 
   useEffect(() => {
@@ -64,7 +64,6 @@ function ProductCategory() {
       searchParams.set('category', selectedCategories.join(','));
     }
 
-    // Update the URL without reloading the page
     window.history.replaceState(null, '', `${location.pathname}?${searchParams.toString()}`);
   }, [selectedCategories]);
 
@@ -136,6 +135,8 @@ function ProductCategory() {
   }
 
   return (
+    <>
+      <div className='w-full h-screen -z-10 absolute left-0 right-0 bg-gray-100'></div>
     <div className="flex flex-row gap-4 md:p-4 md:pt-[5rem] lg:pt-4 pt-[5rem] pl-0 lg:h-[100vw] ">
       <aside
         className={`md:w-1/4  fixed md:m-4 lg:pt-16 md:pt-[10rem] top-0  left-0 h-full bg-white shadow-md p-4 rounded-lg transform ${
@@ -165,9 +166,10 @@ function ProductCategory() {
           <SortingOptions handleSortChange={handleSortChange} className="w-1/2" />
         </div>
         <p className=' font-bold py-3'>Total Result : {sortedProductsList.length}</p>
-        <ProductList products={sortedProductsList} /> {/* Use sortedProductsList here */}
+        <ProductList products={sortedProductsList} /> 
       </main>
     </div>
+    </>
   );
 }
 
