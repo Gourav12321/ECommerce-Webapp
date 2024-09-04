@@ -52,7 +52,7 @@ const Dashboard = () => {
         </div>
         <div className="stat bg-white p-4 rounded-lg shadow-md text-center">
           <h3 className="text-md lg:text-lg font-semibold mb-2">Total Revenue</h3>
-          <p className="text-xl lg:text-2xl font-bold">${Math.round(dashboardData.totalRevenue)}</p>
+          <p className="text-xl lg:text-2xl font-bold">Rs.{Math.round(dashboardData.totalRevenue)}</p>
         </div>
         <div className="stat bg-white p-4 rounded-lg shadow-md text-center">
           <h3 className="text-md lg:text-lg font-semibold mb-2">Total Products</h3>

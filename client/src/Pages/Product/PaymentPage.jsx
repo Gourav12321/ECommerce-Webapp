@@ -3,7 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+
 const PaymentPage = () => {
   const { state } = useLocation();
   const { selectedAddress, orderSummary } = state;
@@ -14,12 +15,12 @@ const PaymentPage = () => {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user.user);
 
-
   const handlePayment = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
+      // Create order
       const { data: orderData } = await axios.post('/api/order/add', {
         userEmail: user.email,
         products: orderSummary.products,
@@ -27,6 +28,7 @@ const PaymentPage = () => {
         totalAmount: orderSummary.totalAmount,
       });
 
+      // Create payment intent
       const { data: paymentResponse } = await axios.post('/api/order/payment', {
         totalAmount: orderSummary.totalAmount,
         orderId: orderData.order._id,
@@ -36,6 +38,7 @@ const PaymentPage = () => {
       const clientSecret = paymentResponse.clientSecret;
       const cardElement = elements.getElement(CardElement);
 
+      // Confirm payment
       const { error: stripeError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: cardElement,
@@ -46,13 +49,17 @@ const PaymentPage = () => {
       });
 
       if (stripeError) {
+        toast.error(stripeError.message);
         throw new Error(stripeError.message);
-        toast.error(stripeError.message)
       }
 
+      // Update order status and clear cart
       await axios.post('/api/order/update-status', { paymentIntentId: paymentIntent.id });
       await axios.post('/api/cart/clear', { email: user.email });
-      toast.success('Payment Successfull!')
+
+      toast.success('Payment Successful!');
+
+      // Generate and open PDF
       const { data: pdfResponse } = await axios.post('/api/order/generate-pdf', {
         user,
         orderSummary: { ...orderSummary, orderId: orderData.order._id },
@@ -75,7 +82,9 @@ const PaymentPage = () => {
     <>
       <div className='w-full h-screen -z-10 absolute left-0 right-0 bg-gray-100'></div>
       <div className="payment-page container mx-auto p-4 md:p-8 bg-gray-100 h-full flex flex-col justify-center items-center">
-        <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800 pt-16 lg:pt-0">Complete Your Payment</h1>
+        <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center text-gray-800 pt-16 lg:pt-0">
+          Complete Your Payment
+        </h1>
 
         <div className="bg-white p-6 md:p-10 rounded-lg shadow-lg w-full max-w-md">
           <h2 className="text-2xl font-semibold mb-4 text-gray-700">Order Summary</h2>

@@ -132,7 +132,7 @@ const CartPage = () => {
             {cartItems.length === 0 ? (
               <p>Your cart is empty.</p>
             ) : (
-              cartItems.map((item) => (
+              cartItems.map((item , index) => (
                 <div key={item.id} className="relative flex flex-col md:flex-row items-center border-b py-4 group">
                   <div className="md:w-3/4 w-full flex items-center">
                     <img
@@ -190,7 +190,7 @@ const CartPage = () => {
           <div className="lg:w-1/3 w-full bg-gray-100 p-4 rounded-lg mt-4 lg:mt-0">
             <h2 className="text-xl font-bold mb-4">Order Summary</h2>
             <div className="border-b pb-2 mb-2">
-              {cartItems.map((item) => (
+              {cartItems.map((item, index) => (
                 <div key={item.id} className="flex justify-between py-2">
                   <p>{item.product?.title || 'Untitled'} (x{item.quantity})</p>
                   <p>Rs. {((item.product?.price || 0) * (1 - (item.product?.discountPercentage || 0) / 100) * item.quantity).toFixed(2)}</p>

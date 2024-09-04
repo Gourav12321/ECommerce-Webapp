@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import ReactImageMagnify from 'react-image-magnify';
 import ReviewForm from './ReviewForm';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
@@ -24,6 +23,12 @@ const ProductPage = () => {
   const [selectedImage, setSelectedImage] = useState('');
   const user = useSelector((state) => state.user.user);
 
+  const [zoomImageCoordinate, setZoomImageCoordinate] = useState({ x: 0, y: 0 });
+  const [zoomImage, setZoomImage] = useState(false);
+  const imgRef = useRef(null);
+  const zoomRef = useRef(null);
+
+  // Fetch product data
   const fetchProduct = async () => {
     try {
       const response = await axios.get(`/api/products/${id}`);
@@ -37,80 +42,91 @@ const ProductPage = () => {
     }
   };
 
+  // Call fetchProduct when id changes
   useEffect(() => {
     fetchProduct();
   }, [id]);
 
+  // Handle image zoom
+  const handleZoomImage = useCallback((e) => {
+    setZoomImage(true);
+    const { left, top, width, height } = e.target.getBoundingClientRect();
+
+    const x = ((e.clientX - left) / width);
+    const y = (e.clientY - top) / height;
+
+    setZoomImageCoordinate({
+      x,
+      y
+    });
+  }, [setZoomImageCoordinate]);
+
+  const handleMouseLeave = () => {
+    setZoomImage(false);
+  };
+
   if (loading) return <div className="text-center mt-10 text-xl font-semibold">Loading...</div>;
   if (error) return <div className="text-center mt-10 text-red-500 text-xl font-semibold">{error}</div>;
 
- 
-  const discountPercentage = product.discountPercentage || 0; 
+  const discountPercentage = product.discountPercentage || 0;
   const discountedPrice = product.price - (product.price * discountPercentage) / 100;
 
   return (
     <div className="container mx-auto p-6 lg:pt-10 md:pt-20 pt-20 md:p-8">
       <div className="flex flex-col md:flex-row">
-       
-      <div className="w-full md:w-1/3 flex flex-col items-start">
-  <div className="w-full mb-4 relative">
-    <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg ">
-        <ReactImageMagnify
-          {...{
-            smallImage: {
-              alt: product.title,
-              isFluidWidth: false,
-              src: selectedImage,
-              width: 380, 
-              height: 550,
-            },
-            largeImage: {
-              src: selectedImage,
-              width: 900,
-              height: 1800,
-            },
-            lensStyle: { backgroundColor: 'rgba(0,0,0,.6)' },
-            enlargedImageContainerDimensions: {
-              width: '200%',
-              height: '100%',
-            },
-            enlargedImagePosition: 'beside',
-            isHintEnabled: true,
-            hintTextMouse: 'Hover to Zoom',
-            shouldUsePositiveSpaceLens: true,
-            enlargedImagePortalId: 'zoom-portal',
-            isEnlargedImagePortalEnabledForTouch: true,
-            style: {
-              display: 'block',
-              margin: 'auto', // Center the image horizontally
-              maxHeight: '100%', // Ensure the image fits within the container
-              maxWidth: '100%',  // Ensure the image fits within the container
-            },
-          }}
-        />
-      <div id="zoom-portal" className="md:absolute top-0 lg:left-[25rem] md:left-[15rem] bg-gray-100 rounded-lg"></div>
-    </div>
-  </div>
-  <div className="w-full flex gap-6">
-    {product.images.map((image, index) => (
-      <div
-        key={index}
-        className="cursor-pointer border border-gray-300 rounded-lg overflow-hidden bg-white w-[4rem]"
-        onClick={() => setSelectedImage(image)}
-      >
-        <img
-          src={image}
-          alt={`Thumbnail ${index}`}
-          className="w-full h-24 object-contain transition-transform duration-300 transform hover:scale-105"
-          onError={(e) => e.target.src = '/path/to/placeholder-image.jpg'} 
-        />
-      </div>
-    ))}
-  </div>
-</div>
+        {/* Main Image and Zoom Preview */}
+        <div className="w-full md:w-1/3 flex flex-col items-start relative">
+          <div className="w-full mb-4 relative">
+            <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
+              <div
+                className="relative"
+                onMouseEnter={() => setZoomImage(true)}
+                onMouseLeave={handleMouseLeave}
+                onMouseMove={handleZoomImage}
+              >
+                <img
+                  ref={imgRef}
+                  src={selectedImage}
+                  alt={product.title}
+                  className="w-full h-full object-cover"
+                  style={{ maxHeight: '550px' }}
+                />
+              </div>
+            </div>
+            {/* Thumbnail Images */}
+            <div className="w-full flex gap-6 mt-4">
+              {product.images.map((image, index) => (
+                <div
+                  key={index}
+                  className="cursor-pointer border border-gray-300 rounded-lg overflow-hidden bg-white w-[4rem]"
+                  onClick={() => setSelectedImage(image)}
+                >
+                  <img
+                    src={image}
+                    alt={`Thumbnail ${index}`}
+                    className="w-full h-24 object-contain transition-transform duration-300 transform hover:scale-105"
+                    onError={(e) => e.target.src = '/path/to/placeholder-image.jpg'}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Zoom Preview */}
+          {zoomImage && (
+            <div
+              ref={zoomRef}
+              className="absolute top-0 left-full ml-4 w-96 h-96 border border-gray-300 bg-white bg-no-repeat bg-cover"
+              style={{
+                backgroundImage: `url(${selectedImage})`,
+                backgroundSize: '200% 200%',
+                backgroundPosition: `${zoomImageCoordinate.x * 100}% ${zoomImageCoordinate.y * 100}%`,
+                pointerEvents: 'none',
+              }}
+            />
+          )}
+        </div>
 
-
-       
+        {/* Product Details */}
         <div className="w-full md:w-2/3 md:pl-8 mt-6 md:mt-0">
           <h1 className="text-4xl font-bold text-gray-800 mb-4">{product.title}</h1>
           <p className="text-xl text-gray-600 mb-6">{product.description}</p>
@@ -191,7 +207,7 @@ const ProductPage = () => {
                 slidesPerView: 4,
               },
             }}
-            loop
+          
           >
             {product.reviews.map((review, index) => (
               <SwiperSlide key={index} className="p-2 rounded-lg bg-gray-100">
