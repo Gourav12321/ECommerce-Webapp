@@ -54,7 +54,7 @@ const ProductPage = () => {
        
         <div className="w-full md:w-1/3 flex flex-col items-start">
           <div className="w-full mb-4 relative">
-            <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg">
+            <div className="border border-gray-300 w-[20rem] rounded-lg overflow-hidden shadow-lg">
               <ReactImageMagnify
                 {...{
                   smallImage: {
@@ -83,7 +83,7 @@ const ProductPage = () => {
               <div id="zoom-portal" className="md:absolute top-0 lg:left-[25rem] md:left-[15rem] bg-gray-100 rounded-lg"></div>
             </div>
           </div>
-          <div className="w-full flex gap-2">
+          <div className="w-full flex gap-6">
             {product.images.map((image, index) => (
               <div
                 key={index}
