@@ -1,4 +1,5 @@
   import React from 'react';
+  import './App.css'
   import { Routes, Route, BrowserRouter } from 'react-router-dom';
   import Home from './Pages/User/Home';
   import Profile from './Pages/User/Profile';
@@ -14,10 +15,9 @@
   import UploadProduct from './Pages/Admin/UploadProduct';
   import AdminLayout from './AdminLayout';
   import AdminRoute from './Pages/Admin/AdminRoutes';
-  import CreateCategory from './Pages/Admin/createCategory';
   import ProductPage from './Pages/Product/ProductPage';
  
-  import './App.css'
+ 
   import ProductCategory from './Pages/Product/ProductCategory';
   import AdminBannerProduct from './Pages/Admin/AdminBannerProduct';
   import AdminOrderPage from './Pages/Admin/AdminOrderPage';
@@ -27,6 +27,7 @@
   import PaymentPage from './Pages/Product/PaymentPage';
 import Dashboard from './Pages/Admin/Dashboard';
 import Wishlist from './Pages/Product/Wishlist';
+import CreateCategory from './Pages/Admin/CreateCategory';
   function App() {
     return (
       <BrowserRouter>
