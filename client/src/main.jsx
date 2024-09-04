@@ -6,7 +6,7 @@ import { store, persistor } from './Pages/Redux/Store';
 import './index.css';
 import App from './App';
 import { Elements } from '@stripe/react-stripe-js';
-import { stripePromise } from './stripe';  // Make sure to create the stripePromise in a separate file as discussed earlier.
+import { stripePromise } from './Stripe.js';  // Make sure to create the stripePromise in a separate file as discussed earlier.
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 ReactDOM.createRoot(document.getElementById('root')).render(
