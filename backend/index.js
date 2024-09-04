@@ -27,7 +27,9 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 
 app.use(express.static(path.join(__dirname, '/client/dist')))
 
-
+app.get('*', (req,res)=>{
+  res.sendFile(path.join(__dirname, 'client', 'dist' , 'index.html'))
+})
 
 app.use('/api/user', UserAuthRoute);
 app.use('/api', ProductRoute);
@@ -36,10 +38,8 @@ app.use('/api/cart', OrderRoute);
 app.use('/api/order', orderRoutes);
 app.use('/api', AdminDashboard);
 app.use('/api',wishlist);
-app.use('/receipts', express.static(path.join(__dirname, 'receipts')));
-app.get('*', (req,res)=>{
-  res.sendFile(path.join(__dirname, 'client', 'dist' , 'index.html'))
-})
+// app.use('/receipts', express.static(path.join(__dirname, 'receipts')));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
