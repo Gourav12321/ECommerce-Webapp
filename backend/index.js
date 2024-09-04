@@ -14,7 +14,7 @@ const path = require('path');
 dotenv.config();
 
 const app = express();
-const __dirname = path.resolve();
+// const __dirname = path.resolve();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
