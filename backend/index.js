@@ -14,7 +14,7 @@ const path = require('path');
 dotenv.config();
 
 const app = express();
-
+const __dirname = path.resolve();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
@@ -25,7 +25,11 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
   console.log(error);
 });
 
+app.use(express.static(path.join(__dirname, '/client/dist')))
 
+app.get('*', (req,res)=>{
+  res.sendFile(path.join(__dirname, 'client', 'dist' , 'index.html'))
+})
 
 app.use('/api/user', UserAuthRoute);
 app.use('/api', ProductRoute);
