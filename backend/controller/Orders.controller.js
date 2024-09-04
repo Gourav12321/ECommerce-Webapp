@@ -5,7 +5,7 @@ const { User } = require('../model/User.model');
 const stripe = require('stripe')('sk_test_51PtkwTA2QU7LOEOQi2E2FuxKs4XSPyb2qqSQlmpHmHWKbtw4R4Jn8u6RiJCB9bzpGEnpg7Qybb9xB7EhnqPuiFtf00Sof3EsLN');
 
 const PDFDocument = require('pdfkit');
-const path = require('path');
+// const path = require('path');
 const fs = require('fs');
 
 const generatePdfReceipt = async (req, res) => {
@@ -19,11 +19,8 @@ const generatePdfReceipt = async (req, res) => {
     const orderDate = order.createdAt;
     const doc = new PDFDocument({ size: 'A4', margin: 50 });
     const fileName = `receipt_${orderSummary.orderId}.pdf`;
-    const filePath = path.join(__dirname, '..', 'receipts', fileName);
+    // const filePath = path.join(__dirname, '..', 'receipts', fileName);
 
-    if (!fs.existsSync(path.join(__dirname, '..', 'receipts'))) {
-      fs.mkdirSync(path.join(__dirname, '..', 'receipts'));
-    }
 
     const writeStream = fs.createWriteStream(filePath);
     doc.pipe(writeStream);
