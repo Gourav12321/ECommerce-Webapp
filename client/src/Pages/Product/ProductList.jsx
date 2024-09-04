@@ -31,8 +31,8 @@ const ProductList = ({ products }) => {
                 <div className="text-gray-800 font-semibold">
                   {product.discountPercentage > 0 ? (
                     <>
-                      <span className="line-through text-red-500">₹{product.price.toFixed(2)}</span>
-                      <span className="ml-2 text-green-500 text-[18px]">₹{discountPrice.toFixed(2)}</span>
+                      <span className="line-through text-red-500 text-[12px] md:text-sm">₹{product.price.toFixed(2)}</span>
+                      <span className="ml-2 text-green-500 text-[14px] md:text-[18px]">₹{discountPrice.toFixed(2)}</span>
                     </>
                   ) : (
                     <span>₹{product.price.toFixed(2)}</span>
