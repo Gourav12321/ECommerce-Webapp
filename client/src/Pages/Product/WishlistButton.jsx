@@ -9,6 +9,9 @@ const WishlistButton = ({ product }) => {
 
   const handleAddToWishlist = async () => {
     try {
+      if(!user){
+        return toast.error('Please Sign In First');
+      }
       await axios.post('/api/wishlist', { email: user.email, productId: product });
       toast.success('Added to Wishlist!')
     } catch (error) {
