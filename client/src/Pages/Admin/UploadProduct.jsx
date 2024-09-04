@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { storage } from '../../Firebase.js';
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import {  toast } from 'react-toastify';
 const UploadProduct = () => {
   const [product, setProduct] = useState({
@@ -148,41 +149,50 @@ const UploadProduct = () => {
   const handleUpload = async () => {
     setLoading(true);
     setErrors({});
-
+  
     try {
-      let thumbnailUrl = '';
-
+      let thumbnailUrl = thumbnailURL;
+  
       if (thumbnailUpload && thumbnailImage) {
-        const storageRef = storage.ref(`thumbnails/${thumbnailImage.name}`);
-        await storageRef.put(thumbnailImage);
-        thumbnailUrl = await storageRef.getDownloadURL();
-      } else {
-        thumbnailUrl = thumbnailURL;
+        const storageRef = ref(storage, `thumbnails/${thumbnailImage.name}`);
+        await uploadBytes(storageRef, thumbnailImage);
+        thumbnailUrl = await getDownloadURL(storageRef);
       }
-
+  
       let imageUrls = [];
-
+  
       if (isImageUpload) {
         imageUrls = await Promise.all(selectedImages.map(async (file) => {
-          const storageRef = storage.ref(`images/${file.name}`);
-          await storageRef.put(file);
-          return storageRef.getDownloadURL();
+          const storageRef = ref(storage, `images/${file.name}`);
+          await uploadBytes(storageRef, file);
+          return getDownloadURL(storageRef);
         }));
-      } else {
+      } else if (imageLinks.length > 0) {
         imageUrls = imageLinks;
       }
-
+  
+      if (!thumbnailUrl) {
+        throw new Error('Thumbnail image is required.');
+      }
+  
+      if (imageUrls.length === 0) {
+        throw new Error('At least one product image is required.');
+      }
+  
       const productData = { ...product, thumbnail: thumbnailUrl, images: imageUrls };
-
+  
+  
       await axios.post('/api/products', productData);
       toast.success('Product uploaded successfully!');
+      // Reset form or redirect after successful upload if needed
     } catch (error) {
-      console.error(error);
-      toast.error('Failed to upload product.');
+      console.error("Error uploading product:", error);
+      toast.error(`Failed to upload product: ${error.message || 'Unknown error occurred'}`);
     } finally {
       setLoading(false);
     }
   };
+
 
   return (
     <div className="max-w-4xl mx-auto p-4 md:pt-0 pt-10  sm:p-6 lg:p-8">
