@@ -13,7 +13,7 @@ const generatePdfReceipt = async (req, res) => {
   
   try {
     
-    const order = await Orders.findOne({ _id: orderSummary.orderId }).exec();
+    const order = await Orders.findById(orderSummary.orderId).exec();
     if (!order) return res.status(404).json({ error: 'Order not found' });
 
     const orderDate = order.createdAt;
@@ -27,6 +27,7 @@ const generatePdfReceipt = async (req, res) => {
 
     const writeStream = fs.createWriteStream(filePath);
     doc.pipe(writeStream);
+
 
     // Add header
     doc.fontSize(25).text('Order Receipt', { align: 'center' });
