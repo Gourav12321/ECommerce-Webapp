@@ -81,7 +81,7 @@ function AdminBannerProduct() {
                 {photoData.map((photo, index) => (
                     <div key={index} className='w-full sm:w-[48%] md:w-[45%] lg:w-[30%] h-[170px] relative'>
                         <Link to={`/product-category?category=${photo._id}`} className='flex w-full h-full z-10'>
-                            <img src={photo.bannerPhoto} alt={photo.name} className="w-full h-full object-cover" />
+                            <img src={photo.bannerPhoto} alt={photo.name} className="w-full h-full object-contain" />
                         </Link>
                         <button
                             onClick={() => handleEdit(photo._id, photo.bannerPhoto)}

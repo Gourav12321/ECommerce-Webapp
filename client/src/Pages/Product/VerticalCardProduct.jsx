@@ -114,6 +114,7 @@ const VerticalCardProduct = ({ heading, categoryName }) => {
                         className="w-full h-32 object-contain rounded"
                       />
                       <h3 className="text-lg font-medium mt-2 truncate">{product.title}</h3>
+                      <h3 className="font-medium truncate">{product.brand}</h3>
                       <p className="text-sm text-gray-600 pb-2">
                         {product.category && product.category.name ? product.category.name : ''}
                       </p>

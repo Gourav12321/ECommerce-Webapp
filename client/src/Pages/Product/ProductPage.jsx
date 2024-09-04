@@ -52,54 +52,63 @@ const ProductPage = () => {
     <div className="container mx-auto p-6 lg:pt-10 md:pt-20 pt-20 md:p-8">
       <div className="flex flex-col md:flex-row">
        
-        <div className="w-full md:w-1/3 flex flex-col items-start">
-          <div className="w-full mb-4 relative">
-            <div className="border border-gray-300 w-[20rem] rounded-lg overflow-hidden shadow-lg">
-              <ReactImageMagnify
-                {...{
-                  smallImage: {
-                    alt: product.title,
-                    isFluidWidth: true,
-                    src: selectedImage,
-                  },
-                  largeImage: {
-                    src: selectedImage,
-                    width: 900,
-                    height: 1800,
-                  },
-                  lensStyle: { backgroundColor: 'rgba(0,0,0,.6)' },
-                  enlargedImageContainerDimensions: {
-                    width: '200%',
-                    height: '100%',
-                  },
-                  enlargedImagePosition: 'beside',
-                  isHintEnabled: true,
-                  hintTextMouse: 'Hover to Zoom',
-                  shouldUsePositiveSpaceLens: true,
-                  enlargedImagePortalId: 'zoom-portal',
-                  isEnlargedImagePortalEnabledForTouch: true,
-                }}
-              />
-              <div id="zoom-portal" className="md:absolute top-0 lg:left-[25rem] md:left-[15rem] bg-gray-100 rounded-lg"></div>
-            </div>
-          </div>
-          <div className="w-full flex gap-6">
-            {product.images.map((image, index) => (
-              <div
-                key={index}
-                className="cursor-pointer border border-gray-300 rounded-lg overflow-hidden bg-white w-[4rem]"
-                onClick={() => setSelectedImage(image)}
-              >
-                <img
-                  src={image}
-                  alt={`Thumbnail ${index}`}
-                  className="w-full h-24 object-contain transition-transform duration-300 transform hover:scale-105"
-                  onError={(e) => e.target.src = '/path/to/placeholder-image.jpg'} 
-                />
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="w-full md:w-1/3 flex flex-col items-start">
+  <div className="w-full mb-4 relative">
+    <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg ">
+        <ReactImageMagnify
+          {...{
+            smallImage: {
+              alt: product.title,
+              isFluidWidth: false,
+              src: selectedImage,
+              width: 380, 
+              height: 550,
+            },
+            largeImage: {
+              src: selectedImage,
+              width: 900,
+              height: 1800,
+            },
+            lensStyle: { backgroundColor: 'rgba(0,0,0,.6)' },
+            enlargedImageContainerDimensions: {
+              width: '200%',
+              height: '100%',
+            },
+            enlargedImagePosition: 'beside',
+            isHintEnabled: true,
+            hintTextMouse: 'Hover to Zoom',
+            shouldUsePositiveSpaceLens: true,
+            enlargedImagePortalId: 'zoom-portal',
+            isEnlargedImagePortalEnabledForTouch: true,
+            style: {
+              display: 'block',
+              margin: 'auto', // Center the image horizontally
+              maxHeight: '100%', // Ensure the image fits within the container
+              maxWidth: '100%',  // Ensure the image fits within the container
+            },
+          }}
+        />
+      <div id="zoom-portal" className="md:absolute top-0 lg:left-[25rem] md:left-[15rem] bg-gray-100 rounded-lg"></div>
+    </div>
+  </div>
+  <div className="w-full flex gap-6">
+    {product.images.map((image, index) => (
+      <div
+        key={index}
+        className="cursor-pointer border border-gray-300 rounded-lg overflow-hidden bg-white w-[4rem]"
+        onClick={() => setSelectedImage(image)}
+      >
+        <img
+          src={image}
+          alt={`Thumbnail ${index}`}
+          className="w-full h-24 object-contain transition-transform duration-300 transform hover:scale-105"
+          onError={(e) => e.target.src = '/path/to/placeholder-image.jpg'} 
+        />
+      </div>
+    ))}
+  </div>
+</div>
+
 
        
         <div className="w-full md:w-2/3 md:pl-8 mt-6 md:mt-0">
@@ -125,7 +134,7 @@ const ProductPage = () => {
             <button className="bg-[#fb661bf3] text-white py-3 px-6 rounded-lg shadow-lg hover:bg-[#ff5623] transition duration-300">
               <AddToCartButton product={product} />
             </button>
-            <button className="bg-blue-500 font-semibold text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
+            <button className="bg-blue-500 font-semibold text-white -z-[1] py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
               <WishlistButton product={id} />
             </button>
           </div>
