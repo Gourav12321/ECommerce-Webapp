@@ -87,7 +87,7 @@ const ProductPage = () => {
             {product.images.map((image, index) => (
               <div
                 key={index}
-                className="cursor-pointer border border-gray-300 rounded-lg overflow-hidden"
+                className="cursor-pointer border border-gray-300 rounded-lg overflow-hidden bg-white w-[4rem]"
                 onClick={() => setSelectedImage(image)}
               >
                 <img
