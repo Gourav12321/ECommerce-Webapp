@@ -10,7 +10,8 @@ const Home2 = () => {
   const fetchCategoryProduct = async () => {
     try {
       const response = await axios.get('/api/categories');
-      setCategoryProduct(response.data.categories);
+      // Ensure the response data is an array
+      setCategoryProduct(response.data.categories || []);
     } catch (error) {
       setError('Error fetching category products');
       console.error('Error fetching category products:', error);
@@ -34,7 +35,7 @@ const Home2 = () => {
   }
 
   // If no products are available, show "No products available" message
-  if (categoryProduct.length === 0) {
+  if (!Array.isArray(categoryProduct) || categoryProduct.length === 0) {
     return <p>No products available</p>;
   }
 
