@@ -1,6 +1,5 @@
 // BouncingDots.js
 import React from 'react';
-import './BouncingDots.css';
 
 const BouncingDots = () => {
   return (
