@@ -21,7 +21,6 @@ const generatePdfReceipt = async (req, res) => {
     const fileName = `receipt_${orderSummary.orderId}.pdf`;
     const filePath = path.join(__dirname, '..', 'receipts', fileName);
 
-
     const writeStream = fs.createWriteStream(filePath);
     doc.pipe(writeStream);
 

@@ -34,7 +34,8 @@ app.use('/api/cart', OrderRoute);
 app.use('/api/order', orderRoutes);
 app.use('/api', AdminDashboard);
 app.use('/api', wishlist);
-
+// Optional: Serve static files from the 'receipts' directory if needed
+app.use('/receipts', express.static(path.join(__dirname, 'receipts')));
 // Serve static files from the Vite build (client/dist folder)
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
@@ -43,8 +44,8 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
-// Optional: Serve static files from the 'receipts' directory if needed
-app.use('/receipts', express.static(path.join(__dirname, 'receipts')));
+
+
 
 // Start the server
 const PORT = process.env.PORT || 3000;
