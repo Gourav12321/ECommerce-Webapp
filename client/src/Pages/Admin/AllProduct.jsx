@@ -122,7 +122,7 @@ const AllProducts = () => {
                 <p className={`${product.discountPercentage ? 'line-through' : ''}`}> Rs.{product.price}</p>
                 {product.discountPercentage && (
                   <p className="text-green-500 font-bold">
-                    {calculateDiscountPrice(product.price, product.discountPercentage)}
+                   Rs. {calculateDiscountPrice(product.price, product.discountPercentage)}
                   </p>
                 )}
               </div>
