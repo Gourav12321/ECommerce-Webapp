@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {  toast } from 'react-toastify';
 import BouncingDots from '../BouncingDots';
@@ -33,7 +33,7 @@ const OrderPage = () => {
             navigate('/');
           }
         } catch (error) {
-          setError('Error fetching data. Please try again later.');
+          console.error('Error fetching data. Please try again later.');
         } finally {
           setLoading(false);
         }
@@ -82,7 +82,9 @@ const OrderPage = () => {
                 </div>
               ))
             ) : (
-              <p>No addresses available. Please add an address first.</p>
+              <div className='text-blue-500 text-xl underline'>
+              <Link to='/address' >No addresses available. Please add an address first. Click Here</Link>
+              </div>
             )}
           </div>
         )}

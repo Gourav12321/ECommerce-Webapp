@@ -119,10 +119,10 @@ const AllProducts = () => {
             <div className="p-4">
               <h2 className="text-lg font-semibold">{product.title}</h2>
               <div className="text-gray-600">
-                <p className={`${product.discountPercentage ? 'line-through' : ''}`}>{product.price} USD</p>
+                <p className={`${product.discountPercentage ? 'line-through' : ''}`}> Rs.{product.price}</p>
                 {product.discountPercentage && (
                   <p className="text-green-500 font-bold">
-                    {calculateDiscountPrice(product.price, product.discountPercentage)} USD
+                    {calculateDiscountPrice(product.price, product.discountPercentage)}
                   </p>
                 )}
               </div>
@@ -150,11 +150,11 @@ const AllProducts = () => {
                 />
                 <p className="text-gray-700 mb-4">{selectedProduct.description}</p>
                 <p className="mb-2">
-                  <strong>Price:</strong> {selectedProduct.price} USD
+                  <strong>Price:</strong>Rs. {selectedProduct.price}
                 </p>
                 {selectedProduct.discountPercentage && (
                   <p className="mb-2 text-green-500">
-                    <strong>Discounted Price:</strong> {calculateDiscountPrice(selectedProduct.price, selectedProduct.discountPercentage)} USD
+                    <strong>Discounted Price:</strong>Rs. {calculateDiscountPrice(selectedProduct.price, selectedProduct.discountPercentage)}
                   </p>
                 )}
                 <p className="mb-2">

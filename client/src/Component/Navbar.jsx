@@ -127,7 +127,7 @@ function Navbar() {
                            <div className=" absolute right-0 mt-5 bg-white border border-gray-200 shadow-lg rounded-lg ">
                            <div className="flex justify-center mt-5">
                              <img
-                               src="https://firebasestorage.googleapis.com/v0/b/e-com-ff1ce.appspot.com/o/mauryagourav82%40gmail.com%2Fgourav-removebg-preview.png?alt=media&token=97a2dad1-b099-4cf0-93d4-185d9332886a"
+                               src="https://firebasestorage.googleapis.com/v0/b/e-com-ff1ce.appspot.com/o/gm7274697%40gmail.com%2Fgourav-removebg-preview.png?alt=media&token=850c99b1-846a-46a3-a91f-47876c9e03f4"
                                alt="Creator Photo"
                                className="w-20 h-20 rounded-full border-2 border-blue-400 shadow-md"
                              />

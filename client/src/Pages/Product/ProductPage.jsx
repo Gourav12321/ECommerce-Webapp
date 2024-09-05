@@ -14,6 +14,7 @@ import AddToCartButton from './AddToCartButton';
 import WishlistButton from './WishlistButton';
 import VerticalCardProduct from './VerticalCardProduct';
 import { useSelector } from 'react-redux';
+import BouncingDots from '../BouncingDots';
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -65,7 +66,7 @@ const ProductPage = () => {
     setZoomImage(false);
   };
 
-  if (loading) return <div className="text-center mt-10 text-xl font-semibold">Loading...</div>;
+  if (loading) return <div><BouncingDots/></div>;
   if (error) return <div className="text-center mt-10 text-red-500 text-xl font-semibold">{error}</div>;
 
   const discountPercentage = product.discountPercentage || 0;

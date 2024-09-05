@@ -120,6 +120,18 @@ const PaymentPage = () => {
           >
             {isLoading ? 'Processing...' : 'Pay Now'}
           </button>
+            <div className=' my-6 w-full'>
+          <p className='text-center font-extrabold text-xl mb-3'>Test Card Information</p>
+          <p className='w-full justify-between flex'>
+          <span>Card Number:</span><span className='font-bold'>4242424242424242</span>
+          </p>
+          <p className='w-full justify-between flex'>
+          <span>Month and Year: </span> <span className='font-bold'>12 / 34</span>
+          </p>
+          <p className='w-full justify-between flex'>
+          <span>CVV:</span> <span className='font-bold'>567</span>
+          </p>
+          </div>
         </div>
       </div>
     </>
