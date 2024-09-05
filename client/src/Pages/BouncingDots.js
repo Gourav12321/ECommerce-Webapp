@@ -1,6 +1,6 @@
 // BouncingDots.js
 import React from 'react';
-
+import './App.css'
 const BouncingDots = () => {
   return (
     <div className="bouncing-dots">
@@ -12,3 +12,4 @@ const BouncingDots = () => {
 };
 
 export default BouncingDots;
+ 
