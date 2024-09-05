@@ -73,12 +73,12 @@ const Wishlist = () => {
                     {product.discountPercentage ? (
                       <div className='flex justify-center items-center gap-3'>
                         
-                        <span className="line-through text-gray-500 text-sm">${product.price.toFixed(2)}</span>
-                        <span className="text-green-500 font-bold text-lg">${(product.price * (1 - product.discountPercentage / 100)).toFixed(2)}</span>
+                        <span className="line-through text-gray-500 text-sm">Rs.{product.price.toFixed(2)}</span>
+                        <span className="text-green-500 font-bold text-lg">Rs.{(product.price * (1 - product.discountPercentage / 100)).toFixed(2)}</span>
                         <span className="text-green-600 text-sm font-bold">{product.discountPercentage}% OFF</span>
                       </div>
                     ) : (
-                      <span className="text-gray-800 font-bold text-lg">${product.price.toFixed(2)}</span>
+                      <span className="text-gray-800 font-bold text-lg">Rs.{product.price.toFixed(2)}</span>
                     )}
                     <Rating
                       value={product.rating}

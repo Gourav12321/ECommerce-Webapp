@@ -279,7 +279,7 @@ const CreateCategory = () => {
                     <img
                       src={category.photo}
                       alt={category.name}
-                      className="w-full h-40 object-cover rounded-md"
+                      className="w-full h-40 object-contain rounded-md"
                     />
                   </div>
                 )}

@@ -22,7 +22,7 @@ const OrderHistory = () => {
     }
   }, [user]);
 
-  const formatCurrency = (amount) => `$${amount.toFixed(2)}`;
+  const formatCurrency = (amount) => `Rs.${amount.toFixed(2)}`;
   const formatDate = (date) => new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
