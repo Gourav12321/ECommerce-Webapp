@@ -16,6 +16,7 @@ const createCategory = async (req, res) => {
 const getCategories = async (req, res) => {
   try {
     const categories = await Category.find().populate('subcategories');
+
     res.status(200).json({ success: true, categories });
   } catch (error) {
     console.error('Failed to retrieve categories:', error);

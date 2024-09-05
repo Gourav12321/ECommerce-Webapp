@@ -14,8 +14,8 @@ const CategoryList = () => {
     try {
       setLoading(true);
       const response = await axios.get('/api/categories');
-    
-      setCategoryProduct(response.data.categories); 
+      // Ensure response.data.categories is an array
+      setCategoryProduct(response.data.categories || []);
     } catch (error) {
       console.error('Error fetching category products:', error);
     } finally {
@@ -62,22 +62,26 @@ const CategoryList = () => {
             />
           ))
         ) : (
-          categoryProduct.map((product) => (
-            
-            <Link to={`/product-category?category=${product._id}`} className="cursor-pointer" key={product.name}>
-              <div className="category-item w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden p-4 bg-slate-200 flex items-center justify-center hover:shadow-lg transition-all">
-                <img
-                  src={product.photo}
-                  alt={product.name}
-                  className="h-full object-scale-down mix-blend-multiply hover:scale-110 transition-all"
-                />
-              </div>
-              <p className="text-center text-sm md:text-base capitalize mt-2">
-                {product.name}
-              </p>
-            </Link>
-
-          ))
+          Array.isArray(categoryProduct) && categoryProduct.length > 0 ? (
+            categoryProduct.map((product) => (
+              <Link to={`/product-category?category=${product._id}`} className="cursor-pointer" key={product._id}>
+                <div className="category-item w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden p-4 bg-slate-200 flex items-center justify-center hover:shadow-lg transition-all">
+                  <img
+                    src={product.photo}
+                    alt={product.name}
+                    className="h-full object-scale-down mix-blend-multiply hover:scale-110 transition-all"
+                  />
+                </div>
+                <p className="text-center text-sm md:text-base capitalize mt-2">
+                  {product.name}
+                </p>
+              </Link>
+            ))
+          ) : (
+            <p className="text-center text-sm md:text-base capitalize mt-2">
+              No categories available
+            </p>
+          )
         )}
       </div>
     </div>

@@ -26,14 +26,6 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Database connected"))
   .catch(error => console.log(error));
 
-// Serve static files from the Vite build (client/dist folder)
-app.use(express.static(path.join(__dirname, '../client/dist')));
-
-// Serve the index.html for any unknown routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
-});
-
 // Define API routes
 app.use('/api/user', UserAuthRoute);
 app.use('/api', ProductRoute);
@@ -42,6 +34,14 @@ app.use('/api/cart', OrderRoute);
 app.use('/api/order', orderRoutes);
 app.use('/api', AdminDashboard);
 app.use('/api', wishlist);
+
+// Serve static files from the Vite build (client/dist folder)
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// Serve the index.html for any unknown routes (SPA)
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
 // Optional: Serve static files from the 'receipts' directory if needed
 app.use('/receipts', express.static(path.join(__dirname, 'receipts')));
