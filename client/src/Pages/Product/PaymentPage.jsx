@@ -66,7 +66,7 @@ const PaymentPage = () => {
         selectedAddress
       });
 
-      window.open(`https://ecommerce-webapp-1.onrender.com/${pdfResponse.fileUrl}`, '_blank');
+      window.open(`http://localhost:3000${pdfResponse.fileUrl}`, '_blank');
       navigate('/orders-history');
 
     } catch (err) {
