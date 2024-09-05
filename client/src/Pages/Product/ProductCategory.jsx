@@ -4,6 +4,7 @@ import CategoryFilter from './CategoryFilter';
 import SortingOptions from './SortingOptions';
 import ProductList from './ProductList';
 import { fetchCategories, fetchProductsByCategory, fetchAllProducts } from './ApiService.js';
+import BouncingDots from '../BouncingDots.jsx';
 
 function ProductCategory() {
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -125,7 +126,7 @@ function ProductCategory() {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div><BouncingDots/></div>;
   }
 
   return (

@@ -80,7 +80,7 @@ const ProductPage = () => {
           <div className="w-full mb-4 relative">
             <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
               <div
-                className="relative"
+                className="relative h-[25rem]"
                 onMouseEnter={() => setZoomImage(true)}
                 onMouseLeave={handleMouseLeave}
                 onMouseMove={handleZoomImage}
@@ -89,7 +89,7 @@ const ProductPage = () => {
                   ref={imgRef}
                   src={selectedImage}
                   alt={product.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain mix-blend-multiply"
                   style={{ maxHeight: '550px' }}
                 />
               </div>
@@ -105,7 +105,7 @@ const ProductPage = () => {
                   <img
                     src={image}
                     alt={`Thumbnail ${index}`}
-                    className="w-full h-24 object-contain transition-transform duration-300 transform hover:scale-105"
+                    className="w-full h-24 object-contain transition-transform duration-300 transform hover:scale-105 mix-blend-multiply"
                     onError={(e) => e.target.src = '/path/to/placeholder-image.jpg'}
                   />
                 </div>
@@ -116,7 +116,7 @@ const ProductPage = () => {
           {zoomImage && (
             <div
               ref={zoomRef}
-              className="absolute top-0 left-full ml-4 w-96 h-96 border border-gray-300 bg-white bg-no-repeat bg-cover"
+              className="absolute top-0 left-full ml-4 w-96 h-96 border border-gray-300  bg-white bg-no-repeat bg-contain"
               style={{
                 backgroundImage: `url(${selectedImage})`,
                 backgroundSize: '200% 200%',
@@ -151,7 +151,7 @@ const ProductPage = () => {
             <button className="bg-[#fb661bf3] text-white py-3 px-6 rounded-lg shadow-lg hover:bg-[#ff5623] transition duration-300">
               <AddToCartButton product={product} />
             </button>
-            <button className="bg-blue-500 font-semibold text-white -z-[1] py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
+            <button className="bg-blue-500 font-semibold text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
               <WishlistButton product={id} />
             </button>
           </div>

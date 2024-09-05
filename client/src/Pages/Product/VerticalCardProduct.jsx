@@ -111,7 +111,7 @@ const VerticalCardProduct = ({ heading, categoryName }) => {
                       <img
                         src={product.thumbnail}
                         alt={product.title}
-                        className="w-full h-32 object-contain rounded"
+                        className="w-full h-32 object-contain rounded mix-blend-multiply"
                       />
                       <h3 className="text-lg font-medium mt-2 truncate">{product.title}</h3>
                       <h3 className="font-medium truncate">{product.brand}</h3>
