@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {  toast } from 'react-toastify';
+import BouncingDots from '../BouncingDots';
 const OrderPage = () => {
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
@@ -60,7 +61,7 @@ const OrderPage = () => {
       <div className="order-page container mx-auto p-4 md:p-8 h-full">
         <h1 className="text-2xl md:text-4xl font-bold mb-6 lg:pt-4 pt-16">Select Address for Delivery</h1>
         {loading ? (
-          <p>Loading...</p>
+          <BouncingDots/>
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (

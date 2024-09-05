@@ -5,6 +5,7 @@ import { MdDelete } from 'react-icons/md';
 import { Rating } from '@mui/material';
 import { Link } from 'react-router-dom';
 import {  toast } from 'react-toastify';
+import BouncingDots from '../BouncingDots';
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,7 @@ const Wishlist = () => {
     }
   };
 
-  if (loading) return <p className="text-center text-lg">Loading...</p>;
+  if (loading) return <BouncingDots/>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
