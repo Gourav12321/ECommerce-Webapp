@@ -39,7 +39,7 @@ const Wishlist = () => {
     }
   };
 
-  if (loading) return <BouncingDots/>;
+  if (loading) return <div className='w-full h-full'><BouncingDots/></div>;
   if (error) return <p className="text-center text-red-500">{error}</p>;
 
   return (
