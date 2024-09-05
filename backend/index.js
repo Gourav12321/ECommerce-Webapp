@@ -14,10 +14,10 @@ const path = require('path');
 dotenv.config();
 
 const app = express();
-const __dirname = path.resolve();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
+const __dirname = path.join();
 
 mongoose.connect(process.env.MONGO_URI).then(() => {
   console.log("Database connected");
