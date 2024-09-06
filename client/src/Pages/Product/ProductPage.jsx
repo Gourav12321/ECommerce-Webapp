@@ -92,7 +92,20 @@ const ProductPage = () => {
                   className="w-full h-full object-contain mix-blend-multiply"
                   style={{ maxHeight: '550px' }}
                 />
+                
               </div>
+              {zoomImage && (
+            <div
+              ref={zoomRef}
+              className="md:hidden top-0  ml-4 w-96 h-96 border border-gray-300  bg-white bg-no-repeat bg-contain"
+              style={{
+                backgroundImage: `url(${selectedImage})`,
+                backgroundSize: '200% 200%',
+                backgroundPosition: `${zoomImageCoordinate.x * 100}% ${zoomImageCoordinate.y * 100}%`,
+                pointerEvents: 'none',
+              }}
+            />
+          )}
             </div>
             {/* Thumbnail Images */}
             <div className="w-full flex gap-6 mt-4">
@@ -116,7 +129,7 @@ const ProductPage = () => {
           {zoomImage && (
             <div
               ref={zoomRef}
-              className="absolute top-0 left-full ml-4 w-96 h-96 border border-gray-300  bg-white bg-no-repeat bg-contain"
+              className="md:absolute hidden top-0 md:left-full ml-4 w-96 h-96 border border-gray-300  bg-white bg-no-repeat bg-contain"
               style={{
                 backgroundImage: `url(${selectedImage})`,
                 backgroundSize: '200% 200%',
