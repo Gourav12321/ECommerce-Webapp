@@ -116,7 +116,7 @@ function Navbar() {
                     </Link>
                     }
                     <div
-                        className='relative'
+                        className='relative cursor-pointer'
                         ref={dropdownRef}
                     >
                         <HiOutlineDotsVertical
@@ -125,6 +125,7 @@ function Navbar() {
                         />
                         {sidebarOpen1 && (
                            <div className=" absolute right-0 mt-5 bg-white border border-gray-200 shadow-lg rounded-lg ">
+                           <button className='text-2xl font-bold text-end w-full pr-5' onClick={toggleSidebar1}>x</button>
                            <div className="flex justify-center mt-5">
                              <img
                                src="https://firebasestorage.googleapis.com/v0/b/e-com-ff1ce.appspot.com/o/gm7274697%40gmail.com%2Fgourav-removebg-preview.png?alt=media&token=850c99b1-846a-46a3-a91f-47876c9e03f4"

@@ -210,7 +210,9 @@ const ProductPage = () => {
             }}
           
           >
-            {product.reviews.map((review, index) => (
+           
+            {
+            product.reviews.map((review, index) => (
               <SwiperSlide key={index} className="p-2 rounded-lg bg-gray-100">
                 <div className="p-4 shadow-md">
                   <Rating
@@ -229,7 +231,9 @@ const ProductPage = () => {
         ) : (
           <p className="text-lg font-semibold text-gray-700">No reviews yet.</p>
         )}
+        {  user &&
         <ReviewForm productId={id} onReviewSubmitted={fetchProduct} />
+        }
       </div>
     </div>
   );

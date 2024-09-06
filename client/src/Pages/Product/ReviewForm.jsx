@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { Rating } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 const ReviewForm = ({ productId, onReviewSubmitted }) => {
+  const user = useSelector((state) => state.user.user);
+
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [reviewerName, setReviewerName] = useState('');
-  const [reviewerEmail, setReviewerEmail] = useState('');
 
   const handleRatingChange = (event, newValue) => {
     setRating(newValue);
@@ -18,8 +20,8 @@ const ReviewForm = ({ productId, onReviewSubmitted }) => {
     const payload = {
       rating,
       comment,
-      reviewerName,
-      reviewerEmail,
+      reviewerName ,
+      reviewerEmail : user.email,
     };
 
     try {
@@ -30,7 +32,6 @@ const ReviewForm = ({ productId, onReviewSubmitted }) => {
         setRating(0);
         setComment('');
         setReviewerName('');
-        setReviewerEmail('');
       }
     } catch (error) {
       console.log(error.message);
@@ -73,16 +74,7 @@ const ReviewForm = ({ productId, onReviewSubmitted }) => {
           required
         />
       </div>
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Your Email</label>
-        <input
-          type="email"
-          value={reviewerEmail}
-          onChange={(e) => setReviewerEmail(e.target.value)}
-          className="w-full p-2 border rounded"
-          required
-        />
-      </div>
+     
       <button
         type="submit"
         className="bg-blue-600 text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300"

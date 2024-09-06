@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import CategoryFilter from './CategoryFilter';
 import SortingOptions from './SortingOptions';
 import ProductList from './ProductList';
-import { fetchCategories, fetchProductsByCategory, fetchAllProducts } from './ApiService.js';
+import { fetchCategories, fetchProductsByCategory } from './ApiService.js';
 import BouncingDots from '../BouncingDots.jsx';
 
 function ProductCategory() {
@@ -16,8 +16,9 @@ function ProductCategory() {
 
   const location = useLocation(); 
   const searchParams = new URLSearchParams(location.search); 
-  const categoryQuery = searchParams.get('category'); // Get the 'category' parameter from the query string
+  const categoryQuery = searchParams.get('category'); 
 
+  // Fetch categories on initial load
   useEffect(() => {
     const getCategories = async () => {
       try {
@@ -33,44 +34,32 @@ function ProductCategory() {
     getCategories();
   }, []);
 
+  // Update the selected categories from URL
   useEffect(() => {
     if (categoryQuery) {
       setSelectedCategories(categoryQuery.split(','));
+      fetchProductsByCategoryData(categoryQuery.split(','));
     }
   }, [categoryQuery]);
 
-  useEffect(() => {
-    const getProducts = async () => {
-      try {
-        let products;
-        if (selectedCategories.length > 0) {
-          products = await fetchProductsByCategory(selectedCategories.join(','));
-        } else {
-          products = await fetchAllProducts();
-        }
-        setSortedProducts(Array.isArray(products) ? products : []);
-      } catch (error) {
-        console.error('Failed to fetch products', error);
-        setSortedProducts([]);
-      }
-    };
-
-    getProducts();
-  }, [selectedCategories]);
-
-  useEffect(() => {
-    if (selectedCategories.length === 0 && categoryQuery) {
-      searchParams.delete('category');
-    } else {
-      searchParams.set('category', selectedCategories.join(','));
+  // Fetch products for selected categories
+  const fetchProductsByCategoryData = async (categories) => {
+    try {
+      setLoading(true);
+      const products = await fetchProductsByCategory(categories.join(','));
+      setSortedProducts(Array.isArray(products) ? products : []);
+    } catch (error) {
+      console.error('Failed to fetch products', error);
+      setSortedProducts([]);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    window.history.replaceState(null, '', `${location.pathname}?${searchParams.toString()}`);
-  }, [selectedCategories]);
-
+  // Handle category selection and fetching products by category
   const handleCategoryChange = (categoryId) => {
     let updatedCategories;
-
+    
     if (selectedCategories.includes(categoryId)) {
       updatedCategories = selectedCategories.filter((id) => id !== categoryId);
     } else {
@@ -78,12 +67,14 @@ function ProductCategory() {
     }
 
     setSelectedCategories(updatedCategories);
+    fetchProductsByCategoryData(updatedCategories);
   };
 
   const handleSortChange = (option) => {
     setSortOption(option);
   };
 
+  // Sorting logic
   const sortedProductsList = useMemo(() => {
     let productsArray = Array.isArray(sortedProducts) ? [...sortedProducts] : [];
 
@@ -95,18 +86,10 @@ function ProductCategory() {
         productsArray.sort((a, b) => (b.price || 0) - (a.price || 0));
         break;
       case 'nameAToZ':
-        productsArray.sort((a, b) => {
-          const nameA = a.title || '';
-          const nameB = b.title || '';
-          return nameA.localeCompare(nameB);
-        });
+        productsArray.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
         break;
       case 'nameZToA':
-        productsArray.sort((a, b) => {
-          const nameA = a.title || '';
-          const nameB = b.title || '';
-          return nameB.localeCompare(nameA);
-        });
+        productsArray.sort((a, b) => (b.title || '').localeCompare(a.title || ''));
         break;
       case 'ratingHighToLow':
         productsArray.sort((a, b) => (b.rating || 0) - (a.rating || 0));
@@ -126,7 +109,7 @@ function ProductCategory() {
   };
 
   if (loading) {
-    return <div><BouncingDots/></div>;
+    return <div><BouncingDots /></div>;
   }
 
   return (
@@ -134,7 +117,7 @@ function ProductCategory() {
       <div className='w-full h-screen -z-10 absolute left-0 right-0 bg-gray-100'></div>
       <div className="flex flex-row gap-4 md:p-4 md:pt-[5rem] lg:pt-4 pt-[5rem] pl-0 lg:h-[100vw] ">
         <aside
-          className={`md:w-1/4  fixed md:m-4 lg:pt-16 md:pt-[10rem] top-0  left-0 h-full bg-white shadow-md p-4 rounded-lg transform ${
+          className={`md:w-1/4 fixed md:m-4 lg:pt-16 md:pt-[10rem] top-0 left-0 h-full bg-white shadow-md p-4 rounded-lg transform ${
             isFilterOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
           } transition-transform duration-300 ease-in-out z-50 md:z-0`}
         >
@@ -160,8 +143,8 @@ function ProductCategory() {
             </button>
             <SortingOptions handleSortChange={handleSortChange} className="w-1/2" />
           </div>
-          <p className=' font-bold py-3'>Total Result : {sortedProductsList.length}</p>
-          <ProductList products={sortedProductsList} /> 
+          <p className='font-bold py-3'>Total Result : {sortedProductsList.length}</p>
+          <ProductList products={sortedProductsList} />
         </main>
       </div>
     </>

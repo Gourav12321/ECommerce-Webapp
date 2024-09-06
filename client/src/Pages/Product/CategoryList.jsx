@@ -76,6 +76,7 @@ const CategoryList = () => {
                   {product.name}
                 </p>
               </Link>
+
             ))
           ) : (
             <p className="text-center text-sm md:text-base capitalize mt-2">
