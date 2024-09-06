@@ -24,10 +24,6 @@ const ProductPage = () => {
   const [selectedImage, setSelectedImage] = useState('');
   const user = useSelector((state) => state.user.user);
 
-  const [zoomImageCoordinate, setZoomImageCoordinate] = useState({ x: 0, y: 0 });
-  const [zoomImage, setZoomImage] = useState(false);
-  const imgRef = useRef(null);
-  const zoomRef = useRef(null);
 
   // Fetch product data
   const fetchProduct = async () => {
@@ -49,22 +45,6 @@ const ProductPage = () => {
   }, [id]);
 
   // Handle image zoom
-  const handleZoomImage = useCallback((e) => {
-    setZoomImage(true);
-    const { left, top, width, height } = e.target.getBoundingClientRect();
-
-    const x = ((e.clientX - left) / width);
-    const y = (e.clientY - top) / height;
-
-    setZoomImageCoordinate({
-      x,
-      y
-    });
-  }, [setZoomImageCoordinate]);
-
-  const handleMouseLeave = () => {
-    setZoomImage(false);
-  };
 
   if (loading) return <div><BouncingDots/></div>;
   if (error) return <div className="text-center mt-10 text-red-500 text-xl font-semibold">{error}</div>;
@@ -81,31 +61,15 @@ const ProductPage = () => {
             <div className="border border-gray-300 rounded-lg overflow-hidden shadow-lg relative">
               <div
                 className="relative h-[25rem]"
-                onMouseEnter={() => setZoomImage(true)}
-                onMouseLeave={handleMouseLeave}
-                onMouseMove={handleZoomImage}
               >
                 <img
-                  ref={imgRef}
                   src={selectedImage}
                   alt={product.title}
                   className="w-full h-full object-contain mix-blend-multiply"
                   style={{ maxHeight: '550px' }}
                 />
-                
               </div>
-              {zoomImage && (
-            <div
-              ref={zoomRef}
-              className="md:hidden top-0  ml-4 w-96 h-96 border border-gray-300  bg-white bg-no-repeat bg-contain"
-              style={{
-                backgroundImage: `url(${selectedImage})`,
-                backgroundSize: '200% 200%',
-                backgroundPosition: `${zoomImageCoordinate.x * 100}% ${zoomImageCoordinate.y * 100}%`,
-                pointerEvents: 'none',
-              }}
-            />
-          )}
+             
             </div>
             {/* Thumbnail Images */}
             <div className="w-full flex gap-6 mt-4">
@@ -126,18 +90,7 @@ const ProductPage = () => {
             </div>
           </div>
           {/* Zoom Preview */}
-          {zoomImage && (
-            <div
-              ref={zoomRef}
-              className="md:absolute hidden top-0 md:left-full ml-4 w-96 h-96 border border-gray-300  bg-white bg-no-repeat bg-contain"
-              style={{
-                backgroundImage: `url(${selectedImage})`,
-                backgroundSize: '200% 200%',
-                backgroundPosition: `${zoomImageCoordinate.x * 100}% ${zoomImageCoordinate.y * 100}%`,
-                pointerEvents: 'none',
-              }}
-            />
-          )}
+         
         </div>
 
         {/* Product Details */}
