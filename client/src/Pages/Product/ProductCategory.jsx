@@ -115,7 +115,7 @@ function ProductCategory() {
   return (
     <>
       <div className='w-full h-screen -z-10 absolute left-0 right-0 bg-gray-100'></div>
-      <div className="flex flex-row gap-4 md:p-4 md:pt-[5rem] lg:pt-4 pt-[5rem] pl-0 lg:h-[100vw] ">
+      <div className="flex flex-row gap-4 md:p-4 md:pt-[5rem] lg:pt-4 pt-[5rem] pl-0 lg:h-full ">
         <aside
           className={`md:w-1/4 fixed md:m-4 lg:pt-16 md:pt-[10rem] top-0 left-0 h-full bg-white shadow-md p-4 rounded-lg transform ${
             isFilterOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
