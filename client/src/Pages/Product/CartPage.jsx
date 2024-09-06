@@ -138,7 +138,7 @@ const CartPage = () => {
                     <img
                       src={item.product?.thumbnail || 'default-thumbnail.jpg'}
                       alt={item.product?.title || 'Product Image'}
-                      className="w-24 h-24 object-cover mr-4 mb-4 md:mb-0"
+                      className="w-24 h-24 object-contain mr-4 mb-4 md:mb-0"
                     />
                     <div>
                       <h2 className="text-lg font-semibold">{item.product?.title || 'Untitled'}</h2>
