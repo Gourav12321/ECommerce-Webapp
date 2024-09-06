@@ -59,6 +59,7 @@ const VerticalCardProduct = ({ heading, categoryName }) => {
         toast.success('Product Remove from wishlist')
       } else {
         await axios.post('/api/wishlist', { email: user.email, productId });
+        
         setWishlist([...wishlist, productId]);
         toast.success('Product Added to wishlist')
       }
@@ -88,7 +89,7 @@ const VerticalCardProduct = ({ heading, categoryName }) => {
             }}
             pagination={{ clickable: true }}
             modules={[Pagination]}
-            className='h-[18rem] md:h-[20rem]'
+            className='h-[20rem] md:h-[20rem]'
           >
             {products.length > 0 ? (
               products.map((product) => (
@@ -97,7 +98,7 @@ const VerticalCardProduct = ({ heading, categoryName }) => {
                     {user && user.email && (
                       <button
                         onClick={() => handleWishlistToggle(product._id)}
-                        className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 focus:outline-none"
+                        className="absolute top-2 right-2 p-2 z-10 bg-white rounded-full shadow-lg hover:bg-gray-100 focus:outline-none"
                         title={wishlist.includes(product._id) ? "Remove from wishlist" : "Add to wishlist"}
                       >
                         {wishlist.includes(product._id) ? (
