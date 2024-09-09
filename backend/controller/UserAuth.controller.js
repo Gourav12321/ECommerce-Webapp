@@ -111,6 +111,12 @@ const OAuthLogin = async (req, res) => {
         .status(400)
         .json({ message: "User Not Found Please Signup First", user: null });
     }
+
+    const token = jwt.sign({ id: user._id, email: user.email, role : user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+  // Send token in the cookie
+  res.cookie('token', token, { httpOnly: true, secure: true, maxAge: 3600000 });
+
     res
       .status(200)
       .json({ success: true, message: "OAuth Login successful", user });
@@ -193,7 +199,14 @@ const signin = async (req, res) => {
         .status(401)
         .json({ success: false, message: "Invalid email or password" });
     }
-    res.status(200).json({ success: true, user });
+
+  // Create the JWT token
+  const token = jwt.sign({ id: user._id, email: user.email, role : user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+  // Send token in the cookie
+  res.cookie('token', token, { httpOnly: true, secure: true, maxAge: 3600000 }); // 1 hour expiration
+
+    res.status(200).json({ success: true, user});
 
   } catch (error) {
     console.error(error);

@@ -51,6 +51,8 @@ function Signin() {
             })
           );
         }, 1500);
+       
+        
         navigate('/');
       } 
     } catch (error) {

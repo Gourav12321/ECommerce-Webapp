@@ -28,9 +28,9 @@ function OAuthLogin() {
         fullName: response.data.user.fullName,
         email: response.data.user.email,
         profile: response.data.user.profile,
-        role : response.data.user.role
+        role : response.data.user.role,
       }));
-     
+
       if (response.data.user.password === null) {
         toast.error('First setup your password');
         navigate('/setup-password', { state: { email: response.data.user.email } });

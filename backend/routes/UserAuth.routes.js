@@ -37,9 +37,9 @@ router.put('/updateAddress', updateAddress);
 router.delete('/deleteAddress/:addressId', deleteAddress);
 
 router.put("/edit-user", editUser);
-router.get("/users", getAllUsers);
+router.get("/users",adminMiddleware, getAllUsers);
 router.put("/update-user", updateUser);
-router.delete("/delete-user/:id", deleteUser);
+router.delete("/delete-user/:id",adminMiddleware, deleteUser);
 
 router.get("/admin", adminMiddleware, (req, res) => {
   res.status(200).json({ message: "Welcome to the admin panel." });

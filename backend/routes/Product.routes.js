@@ -12,11 +12,12 @@ const {
   getProductbyCategory,
   getProductsByCategory,
 } = require("../controller/Product.controller");
-router.post("/products", createProduct);
+const adminMiddleware = require("../middleware/adminMiddleware");
+router.post("/products",adminMiddleware, createProduct);
 router.get("/products", getProducts);
 router.get("/products/:id", getProductById);
-router.put("/products/:id", updateProduct);
-router.delete("/products/:id", deleteProduct);
+router.put("/products/:id",adminMiddleware, updateProduct);
+router.delete("/products/:id",adminMiddleware, deleteProduct);
 router.get("/search", searchProducts);
 router.post("/products/:id/reviews", addReview);
 router.get('/products/category/:categoryName', getProductbyCategory);

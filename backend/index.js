@@ -11,7 +11,7 @@ const orderRoutes = require('./routes/Orders.route');
 const AdminDashboard = require('./routes/AdminDashboard.route');
 const wishlist = require('./routes/wishlist.routes');
 const path = require('path');
-
+const cookieParser = require('cookie-parser');
 // Load environment variables
 dotenv.config();
 
@@ -20,7 +20,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
-
+app.use(cookieParser());
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Database connected"))
