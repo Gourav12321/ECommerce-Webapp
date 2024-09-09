@@ -24,9 +24,9 @@ const WishlistButton = ({ product }) => {
       
         <button
           onClick={handleAddToWishlist}
-          className=" py-2 px-4 rounded"
+          className=""
         >
-          <MdFavoriteBorder className="inline-block mr-2" />
+          <MdFavoriteBorder className="inline-block mr-2 " />
           Add to Wishlist
         </button>
       </div>

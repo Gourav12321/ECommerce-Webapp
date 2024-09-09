@@ -42,15 +42,15 @@ const OrderHistory = () => {
             <div key={order._id} className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105">
               <div className="p-6">
                 <p className="text-sm text-gray-600 mb-4">Order Date: {formatDate(order.createdAt)}</p>
-                <p className="text-xl font-bold mb-4 text-gray-800">Total Amount: {formatCurrency(order.totalAmount)}</p>
-                <p className="text-sm text-gray-600">Shipment Status: {order.orderStatus}</p>
+                <p className="text-xl font-bold mb-4 text-gray-800">Total Amount: <span className=''>{formatCurrency(order.totalAmount)}</span></p>
+                <p className="text-sm  text-gray-600">Shipment Status: <span className='font-bold underline'>{order.orderStatus}</span></p>
                 <div className="order-products">
                   {order.products && order.products.length > 0 ? (
                     order.products.map((item, idx) => (
                       <div key={item.product._id + idx} className="border-t border-gray-200 pt-4 mt-4">
                         <Link to={`/product/${item.product._id}`}>
-                          <div className='h-[15rem]'>
-                            <img src={item.product.thumbnail} alt={item.product.title} className='h-[15rem] w-full object-contain'/>
+                          <div className='h-[11rem]'>
+                            <img src={item.product.thumbnail} alt={item.product.title} className='h-[10rem] w-full object-contain'/>
                           </div>
                           <p className="text-sm font-medium text-gray-800">{item.product.title}</p>
                           <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>

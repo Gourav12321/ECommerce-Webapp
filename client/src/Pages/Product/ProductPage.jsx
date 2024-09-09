@@ -95,33 +95,33 @@ const ProductPage = () => {
 
         {/* Product Details */}
         <div className="w-full md:w-2/3 md:pl-8 mt-6 md:mt-0">
-          <h1 className="text-4xl font-bold text-gray-800 mb-4">{product.title}</h1>
-          <p className="text-xl text-gray-600 mb-6">{product.description}</p>
+          <h1 className="lg:text-4xl md:text-2xl text-xl font-bold text-gray-800 mb-4">{product.title}</h1>
+          <p className="md:text-xl text-[14px] text-gray-600 mb-6 ">{product.description}</p>
 
           {discountPercentage > 0 ? (
             <div className="mb-4">
-              <p className="text-2xl font-semibold text-green-500">
+              <p className="lg:text-2xl text-xl font-semibold text-green-500">
                 Rs.{discountedPrice.toFixed(2)}
                 <span className="line-through text-gray-500 ml-2">Rs.{product.price.toFixed(2)}</span>
               </p>
               <p className="text-lg font-medium text-green-500">Save {discountPercentage}%</p>
             </div>
           ) : (
-            <p className="text-2xl font-semibold text-gray-900 mb-4">Rs.{product.price}</p>
+            <p className="lg:text-2xl text-xl font-semibold text-gray-900 mb-4">Rs.{product.price}</p>
           )}
 
-          <p className="text-lg font-medium text-gray-700 mb-4">Brand: <span className="font-normal">{product.brand}</span></p>
-          <p className="text-lg font-medium text-gray-700 mb-4">SKU: <span className="font-normal">{product.sku}</span></p>
-          <p className="text-lg font-medium text-gray-700 mb-4">Stock: <span className="font-normal">{product.stock}</span></p>
+          <p className="md:text-lg text-[14px] font-medium text-gray-700 mb-4">Brand: <span className="font-normal">{product.brand}</span></p>
+          <p className="md:text-lg text-[14px]  font-medium text-gray-700 mb-4">SKU: <span className="font-normal">{product.sku}</span></p>
+          <p className="md:text-lg text-[14px]  font-medium text-gray-700 mb-4">Stock: <span className="font-normal">{product.stock}</span></p>
           <div className="flex gap-4 mb-6">
-            <button className="bg-[#fb661bf3] text-white py-3 px-6 rounded-lg shadow-lg hover:bg-[#ff5623] transition duration-300">
+            <button className="bg-[#FF9F00] text-white md:py-3 py-4  text-[12px]  md:text-xl px-6 rounded-lg shadow-lg hover:bg-[#eca128] transition duration-300">
               <AddToCartButton product={product} />
             </button>
-            <button className="bg-blue-500 font-semibold text-white py-3 px-6 rounded-lg shadow-lg hover:bg-blue-700 transition duration-300">
+            <button className="bg-[#FB641B] font-semibold text-white md:py-3 py-4 px-6 text-[12px] md:text-xl rounded-lg shadow-lg hover:bg-[#dd520d] transition duration-300">
               <WishlistButton product={id} />
             </button>
           </div>
-          <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-6">
+          <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-6 text-[14px]">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">Product Details:</h2>
             <p className="text-gray-700 mb-1">Weight: <span className="font-normal">{product.weight} gm</span></p>
             <p className="text-gray-700 mb-1">Dimensions: <span className="font-normal">{product.dimensions.width}x{product.dimensions.height}x{product.dimensions.depth} mm</span></p>
@@ -129,7 +129,7 @@ const ProductPage = () => {
             <p className="text-gray-700 mb-1">Shipping Info: <span className="font-normal">{product.shippingInformation}</span></p>
             <p className="text-gray-700">Return Policy: <span className="font-normal">{product.returnPolicy}</span></p>
           </div>
-          <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+          <div className="bg-gray-100 p-4 rounded-lg shadow-md text-[14px]">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">Tags:</h2>
             <ul className="list-disc list-inside text-gray-700">
               {product.tags.map(tag => (
@@ -140,7 +140,7 @@ const ProductPage = () => {
         </div>
       </div>
       <div>
-        <p className="text-2xl font-semibold my-4">Recommended Products</p>
+        <p className="md:text-2xl text-[18px]  font-semibold my-4">Recommended Products</p>
         <VerticalCardProduct 
           categoryName={Array.isArray(product.category) 
             ? product.category.map((en) => en.name).join(', ') 
@@ -152,7 +152,7 @@ const ProductPage = () => {
       </div>
       {/* Customer Reviews Section */}
       <div className="mt-10 w-full lg:px-10 md:px-1 overflow-hidden">
-        <h2 className="text-2xl font-semibold mb-4">Customer Reviews</h2>
+        <h2 className="md:text-2xl text-xl font-semibold mb-4">Customer Reviews</h2>
         {product.reviews.length > 0 ? (
           <Swiper
             spaceBetween={20}

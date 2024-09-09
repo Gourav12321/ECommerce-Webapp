@@ -19,6 +19,7 @@ function Signup() {
 
   const [data, setData] = useState({});
   const [seen, setSeen] = useState(false);
+  const [loading, setLoading] = useState(false); // Loading state
   const [passwordStrength, setPasswordStrength] = useState('');
 
   const handleChange = (e) => {
@@ -60,17 +61,22 @@ function Signup() {
     }
 
     if (!data.fullName || !data.email || !data.password) {
-      toast.error("All fields are required");
+      toast.error('All fields are required');
       return;
     }
+
+    setLoading(true); // Start loading
+
     try {
-      toast.info('Please Verify Your Email');
+     
       await axios.post('/api/user/verifyMail', data);
-      
+      toast.info('Please Verify Your Email');
       navigate('/verify-email');
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("An error occurred while submitting the form");
+      console.error('Error:', error);
+      toast.error(error.response.data.message);
+    } finally {
+      setLoading(false); // Stop loading
     }
   };
 
@@ -139,17 +145,28 @@ function Signup() {
                 </button>
               </div>
               <div className='mt-2'>
-                <span className={`text-sm font-medium ${passwordStrength === 'Strong' ? 'text-green-500' : passwordStrength === 'Medium' ? 'text-yellow-500' : 'text-red-500'}`}>
+                <span
+                  className={`text-sm font-medium ${
+                    passwordStrength === 'Strong'
+                      ? 'text-green-500'
+                      : passwordStrength === 'Medium'
+                      ? 'text-yellow-500'
+                      : 'text-red-500'
+                  }`}
+                >
                   {passwordStrength} Password
                 </span>
               </div>
             </div>
             <div>
               <button
-                type="submit"
-                className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                type='submit'
+                className={`group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white ${
+                  loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                }`}
+                disabled={loading} // Disable button when loading
               >
-                Submit
+                {loading ? 'Submitting...' : 'Submit'}
               </button>
             </div>
             <div>
@@ -157,7 +174,7 @@ function Signup() {
             </div>
             <div className={`${styles.noramlFlex} w-full`}>
               <h4>Already have an account?</h4>
-              <Link to="/sign-in" className="text-blue-600 pl-2">
+              <Link to='/sign-in' className='text-blue-600 pl-2'>
                 Sign In
               </Link>
             </div>

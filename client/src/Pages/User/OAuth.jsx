@@ -29,7 +29,7 @@ function OAuth() {
         toast.error('OAuth registration failed. Please try again.');
       }
     } catch (error) {
-      toast.error("Error in OAuth:", error.response?.data || error.message);
+      toast.error( error.response?.data.message || error.message);
     }
   };
   
@@ -38,11 +38,11 @@ function OAuth() {
     <div>
       <button
         type='button'
-        className='group relative w-full h-[40px] flex justify-center py-2 px-4 border border-gray-300 shadow-lg text-sm font-medium rounded-md '
+        className=' relative w-full h-[40px] flex items-center justify-center py-2 px-4 border border-gray-300 shadow-lg text-sm font-medium rounded-md '
         onClick={handleGoogle}
       >
         <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/480px-Google_%22G%22_logo.svg.png" alt="google" className='w-7 h-7 mr-2' />
-        Continue With Google
+        Sign Up With Google
       </button>
 
     </div>

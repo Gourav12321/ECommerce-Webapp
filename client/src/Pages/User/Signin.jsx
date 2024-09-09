@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { IoEye, IoEyeOff } from 'react-icons/io5';
 import { setUser } from '../Redux/userSlice';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 import styles from '../../style';
 import OAuthLogin from './OAuth Login';
@@ -22,6 +22,7 @@ function Signin() {
 
   const [data, setData] = useState({});
   const [seen, setSeen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // New loading state
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,36 +36,38 @@ function Signin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Show loading spinner
     try {
       const response = await axios.post('/api/user/signin', data);
       if (response.data.success === true) {
-        toast.success("Login Successfully");
-        setTimeout(() => { dispatch(setUser({
-          fullName: response.data.user.fullName,
-          email: response.data.user.email,
-          profile: response.data.user.profile,
-          role : response.data.user.role
-        }))}, 1500);
-        navigate('/')
-      } else {
-        toast.error("Invalid Credential");
-      }
+        toast.success('Login Successfully');
+        setTimeout(() => {
+          dispatch(
+            setUser({
+              fullName: response.data.user.fullName,
+              email: response.data.user.email,
+              profile: response.data.user.profile,
+              role: response.data.user.role,
+            })
+          );
+        }, 1500);
+        navigate('/');
+      } 
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("Invalid Credential");
+      console.error('Error:', error);
+      toast.error(error.response.data.message);
+    } finally {
+      setIsLoading(false); // Hide loading spinner
     }
   };
 
   return (
-    <div className="w-full min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="w-full min-h-screen flex flex-col justify-center py-12 px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h1 className="mt-6 text-center text-3xl font-extrabold">
-          Login To Your Account
-        </h1>
+        <h1 className="mt-6 text-center text-3xl font-extrabold">Login To Your Account</h1>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
@@ -100,21 +103,46 @@ function Signin() {
                   className="absolute inset-y-0 right-3 flex items-center"
                   aria-label={seen ? 'Hide password' : 'Show password'}
                 >
-                  {seen ? (
-                    <IoEye className="text-gray-500" />
-                  ) : (
-                    <IoEyeOff className="text-gray-500" />
-                  )}
+                  {seen ? <IoEye className="text-gray-500" /> : <IoEyeOff className="text-gray-500" />}
                 </button>
               </div>
             </div>
-            
+
             <div>
               <button
                 type="submit"
-                className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                disabled={isLoading} // Disable button while loading
+                className={`group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 ${
+                  isLoading ? 'cursor-not-allowed bg-blue-400' : 'hover:bg-blue-700'
+                }`}
               >
-                Submit
+                {isLoading ? (
+                  <div className="flex items-center">
+                    <svg
+                      className="animate-spin h-5 w-5 text-white mr-3"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      ></path>
+                    </svg>
+                    Loading...
+                  </div>
+                ) : (
+                  'Submit'
+                )}
               </button>
             </div>
             <div>
@@ -128,7 +156,6 @@ function Signin() {
             </div>
           </form>
         </div>
-       
       </div>
     </div>
   );

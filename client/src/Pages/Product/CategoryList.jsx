@@ -6,6 +6,8 @@ import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 const CategoryList = () => {
   const [categoryProduct, setCategoryProduct] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showLeftButton, setShowLeftButton] = useState(false);
+  const [showRightButton, setShowRightButton] = useState(false);
   const categoryListRef = useRef(null);
 
   const categoryLoading = new Array(13).fill(null);
@@ -14,7 +16,6 @@ const CategoryList = () => {
     try {
       setLoading(true);
       const response = await axios.get('/api/categories');
-      // Ensure response.data.categories is an array
       setCategoryProduct(response.data.categories || []);
     } catch (error) {
       console.error('Error fetching category products:', error);
@@ -23,9 +24,34 @@ const CategoryList = () => {
     }
   };
 
+  const updateButtonVisibility = () => {
+    if (categoryListRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = categoryListRef.current;
+      setShowLeftButton(scrollLeft > 0);
+      setShowRightButton(scrollLeft + clientWidth < scrollWidth);
+    }
+  };
+
   useEffect(() => {
     fetchCategoryProduct();
   }, []);
+
+  useEffect(() => {
+    updateButtonVisibility(); 
+    window.addEventListener('resize', updateButtonVisibility);
+
+    if (categoryListRef.current) {
+      categoryListRef.current.addEventListener('scroll', updateButtonVisibility);
+    }
+
+    return () => {
+      window.removeEventListener('resize', updateButtonVisibility);
+
+      if (categoryListRef.current) {
+        categoryListRef.current.removeEventListener('scroll', updateButtonVisibility);
+      }
+    };
+  }, [categoryProduct]);
 
   const handleScroll = (direction) => {
     if (categoryListRef.current) {
@@ -35,23 +61,27 @@ const CategoryList = () => {
   };
 
   return (
-    <div className="relative container mx-auto p-4 lg:pt-4 md:pt-16 pt-[5rem] bg-slate-100 border-b-4 rounded-2xl">
-      <button
-        className="absolute -left-6 top-[40%] transform -translate-y-1/2 z-10 hidden lg:block bg-gray-200 hover:bg-gray-300 p-2 rounded-full shadow-md"
-        onClick={() => handleScroll('left')}
-      >
-        <FaChevronLeft size={24} />
-      </button>
+    <div className="relative w-full  p-4 lg:pt-4 md:pt-16 pt-[5rem] bg-slate-100 border-b-4 rounded-2xl">
+      {showLeftButton && (
+        <button
+          className="absolute -left-6 top-[40%] transform -translate-y-1/2 z-10 hidden lg:block bg-gray-200 hover:bg-gray-300 p-2 rounded-full shadow-md"
+          onClick={() => handleScroll('left')}
+        >
+          <FaChevronLeft size={24} />
+        </button>
+      )}
 
-      <button
-        className="absolute -right-5 top-[40%]  transform -translate-y-1/2 z-10 hidden lg:block bg-gray-200 hover:bg-gray-300 p-2 rounded-full shadow-md"
-        onClick={() => handleScroll('right')}
-      >
-        <FaChevronRight size={24} />
-      </button>
+      {showRightButton && (
+        <button
+          className="absolute -right-5 top-[40%] transform -translate-y-1/2 z-10 hidden lg:block bg-gray-200 hover:bg-gray-300 p-2 rounded-full shadow-md"
+          onClick={() => handleScroll('right')}
+        >
+          <FaChevronRight size={24} />
+        </button>
+      )}
 
       <div
-        className="category-list flex lg:gap-12 md:gap-6 gap-4 overflow-x-auto"
+        className="category-list lg:gap-12 flex justify-evenly md:gap-6 gap-4 overflow-x-auto scrollbar-hide"
         ref={categoryListRef}
       >
         {loading ? (

@@ -22,7 +22,7 @@ function OAuthLogin() {
       };
   
       const response = await axios.post('/api/user/oAuthLogin', payload);
-      toast.success('Login Successfully');
+
       
       dispatch(setUser({
         fullName: response.data.user.fullName,
@@ -51,7 +51,7 @@ function OAuthLogin() {
     <div>
       <button
         type='button'
-        className='group relative w-full h-[40px] flex justify-center py-2 px-4 border border-gray-300 shadow-lg text-sm font-medium rounded-md '
+        className=' relative w-full h-[40px] flex justify-center items-center py-2 px-4 border border-gray-300 shadow-lg text-sm font-medium rounded-md '
         onClick={handleGoogle}
       >
         <img
@@ -59,7 +59,7 @@ function OAuthLogin() {
           alt="google"
           className='w-7 h-7 mr-2'
         />
-        Continue With Google
+        Login With Google
       </button>
      
     </div>

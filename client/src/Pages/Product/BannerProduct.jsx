@@ -56,14 +56,13 @@ function BannerProduct() {
     return (
         <div className='w-full h-[20rem] flex items-center relative rounded-2xl overflow-hidden'>
             <Swiper
-                modules={[Navigation, Pagination, Autoplay]}
+                modules={[ Pagination, Autoplay]}
                 spaceBetween={50}
                 slidesPerView={1}
                 autoplay={{
                     delay: 2500,
                     disableOnInteraction: false,
                 }}
-                navigation
                 pagination={{ type: 'progressbar' }}
                 onAutoplayTimeLeft={onAutoplayTimeLeft}
                 className="swiper1"
@@ -72,7 +71,7 @@ function BannerProduct() {
                     <SwiperSlide key={index} className='rounded-2xl'>
                         <Link to={`/product-category?category=${photo._id}`} className='w-full h-full'>
                             {isMobile ? (
-                                <img src={mobileImages[index]} alt={photo.name} className="w-full h-full object-fill rounded-2xl" />
+                                <img src={mobileImages[index]} alt={photo.name} className="w-full h-full object-contain rounded-2xl" />
                             ) : (
                                 <img src={photo.bannerPhoto} alt={photo.name} className="w-full h-full object-cover rounded-2xl" />
                             )}
@@ -81,12 +80,7 @@ function BannerProduct() {
                 ))}
             </Swiper>
 
-            <div className="autoplay-progress" slot="container-end">
-                <svg viewBox="0 0 48 48" ref={progressCircle}>
-                    <circle cx="24" cy="24" r="20"></circle>
-                </svg>
-                <span ref={progressContent}></span>
-            </div>
+            
         </div>
     );
 }

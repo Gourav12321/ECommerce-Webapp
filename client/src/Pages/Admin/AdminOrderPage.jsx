@@ -42,7 +42,7 @@ const AdminOrderPage = () => {
     try {
       await axios.post(`/api/order/admin/orders/update-status`, { orderId, status });
       fetchOrders();
-      toast.success('Status has been Updated');
+      toast.success('Status has been updated');
     } catch (error) {
       console.error('Error updating order status:', error);
       toast.error('Failed to update status');
@@ -61,56 +61,66 @@ const AdminOrderPage = () => {
   };
 
   return (
-    <div className="admin-order-page pt-10  min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 lg:pt-0 md:pt-10 pt-20">Manage Orders</h1>
-      {/* <input
-        type="text"
-        placeholder="Search orders..."
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        className="search-bar mb-6 p-2 border border-gray-300 rounded w-full max-w-md"
-      /> */}
+    <div className="admin-order-page pt-10 min-h-screen">
+      <h1 className="text-4xl font-bold mb-6 text-center">Manage Orders</h1>
 
       {loading ? (
         <p className="text-center text-gray-600">Loading orders...</p>
       ) : error ? (
         <p className="text-center text-red-500">{error}</p>
       ) : (
-        <div className="order-list w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7">
-          {orders.length > 0 ? (
-            orders.map((order) => (
-              <div key={order._id} className="order-card w-[100%] bg-white p-4 rounded-lg shadow-lg relative">
-                <button
-                  onClick={() => handleDeleteOrder(order._id)}
-                  className="absolute top-2 right-2 text-red-500 hover:text-red-700 transition"
-                >
-                  <FaTrashAlt size={20} />
-                </button>
-                <h3 className=" mb-2">Order ID: {order._id}</h3>
-                <p className="text-gray-700 mb-2">
-                  User: {order.user ? order.user.email : 'Unknown User'}
-                </p>
-                <p className="text-gray-700 mb-2">
-                  Products: {order.products.map(p => p.product.title).join(', ')}
-                </p>
-                <p className="text-gray-700 mb-2">Total Amount: ${order.totalAmount.toFixed(2)}</p>
-                <p className="text-gray-700 mb-2">Order Status: {order.orderStatus}</p>
-                <select
-                  onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                  value={order.orderStatus}
-                  className="p-2 border border-gray-300 rounded w-full"
-                >
-                  <option value="Pending">Pending</option>
-                  <option value="Processing">Processing</option>
-                  <option value="Shipped">Shipped</option>
-                  <option value="Delivered">Delivered</option>
-                  <option value="Cancelled">Cancelled</option>
-                </select>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-600">No orders found.</p>
-          )}
+        <div className="w-full overflow-x-auto">
+          <table className="min-w-full table-auto bg-white border border-gray-200 rounded-lg shadow-lg">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="px-4 py-2 text-left">Order ID</th>
+                <th className="px-4 py-2 text-left">User</th>
+                <th className="px-4 py-2 text-left">Products</th>
+                <th className="px-4 py-2 text-left">Total Amount</th>
+                <th className="px-4 py-2 text-left">Order Status</th>
+                <th className="px-4 py-2 text-center">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.length > 0 ? (
+                orders.map((order) => (
+                  <tr key={order._id} className="border-b hover:bg-gray-50">
+                    <td className="px-4 py-2">{order._id}</td>
+                    <td className="px-4 py-2">{order.user ? order.user.email : 'Unknown User'}</td>
+                    <td className="px-4 py-2">{order.products.map(p => p.product.title).join(', ')}</td>
+                    <td className="px-4 py-2">${order.totalAmount.toFixed(2)}</td>
+                    <td className="px-4 py-2">
+                      <select
+                        onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                        value={order.orderStatus}
+                        className="p-2 border border-gray-300 rounded w-full"
+                      >
+                        <option value="Pending">Pending</option>
+                        <option value="Processing">Processing</option>
+                        <option value="Shipped">Shipped</option>
+                        <option value="Delivered">Delivered</option>
+                        <option value="Cancelled">Cancelled</option>
+                      </select>
+                    </td>
+                    <td className="px-4 py-2 text-center">
+                      <button
+                        onClick={() => handleDeleteOrder(order._id)}
+                        className="text-red-500 hover:text-red-700 transition"
+                      >
+                        <FaTrashAlt size={20} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6" className="text-center py-4 text-gray-600">
+                    No orders found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
